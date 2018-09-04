@@ -1,6 +1,6 @@
 # DotNetCoreWebApiBase
  DotNetCoreWebApi基础框架
- 实现一下基本功能
+ 实现以下基本功能
  
  1. 接收解析xml报文
  2. Cors操作
