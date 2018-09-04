@@ -1,0 +1,19 @@
+﻿sudo: required
+
+services:
+  - docker
+
+language: csharp
+dist: trusty
+dotnet: 2.0.0
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    docker build -t "$REGISTRY_URL"/"$REGISTRY_IMAGE" .;
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" "$REGISTRY_URL";
+    docker push "$REGISTRY_URL"/"$REGISTRY_IMAGE";
+    fi
+
+script:
+  - dotnet restore
+  - dotnet publish -c Release -o ./obj/Docker/publish
