@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace c4e_o4n_a3i
+namespace ACBC
 {
     public class Startup
     {
