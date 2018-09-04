@@ -10,16 +10,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace ACBC.Controllers
 {
     [Produces("application/json")]
-    [Consumes("multipart/form-data")]
     [Route(Global.ROUTE_PX + "/[controller]/[action]")]
     [EnableCors("AllowSameDomain")]
-    public class UploadController : Controller
+    public class CoreController : Controller
     {
         [HttpPost]
-        [ActionName("Temp")]
-        public ActionResult Temp(IFormCollection param)
+        public ActionResult Demos([FromBody]DemoApi demoApi)
         {
-            return Json(Global.BUSS.HeaderBussResults(this, new UploadApi { param = param }));
+            if (demoApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BodyBussResults(this, demoApi));
         }
 
     }

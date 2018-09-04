@@ -15,19 +15,13 @@ namespace ACBC.Buss
             return ApiType.UploadApi;
         }
 
-        public object Do_Temp(object param, string userId)
+        public object Do_Temp(BaseApi baseApi)
         {
-            var upload = (IFormCollection)param;
-            //string ss = upload["ss"];
-
-            //if (ss == null)
-            //{
-            //    throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
-            //}
+            var upload = (IFormCollection)baseApi.param;
             List<string> fileList = new List<string>();
             foreach (IFormFile iFormFile in upload.Files)
             {
-                string fileName = userId + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid().ToString();
+                string fileName = baseApi.code + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid().ToString();
                 using (Stream sm = iFormFile.OpenReadStream())
                 {
                     byte[] b = new byte[sm.Length];

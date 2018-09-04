@@ -13,6 +13,8 @@ namespace ACBC.Common
         OK = 0,
         PostNull = -1,
 
+        AppIDError = 201,
+        SignError = 202,
 
         NotFound = 404,
         InnerError = 500,

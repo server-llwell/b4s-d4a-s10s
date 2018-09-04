@@ -8,6 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace ACBC.Buss
 {
@@ -79,41 +85,39 @@ namespace ACBC.Buss
         }
 
         /// <summary>
-        /// 检查token判断执行权限
+        /// 验证令牌
         /// </summary>
-        /// <param name="apiType"></param>
-        /// <param name="userId"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        private Message CheckToken(ApiType apiType, string userId, string token, string route)
+        /// <param name="baseApi">传入参数</param>
+        /// <param name="route">API路径</param>
+        /// <returns>验证结果，null为通过</returns>
+        private Message CheckToken(BaseApi baseApi, string route)
         {
             Message msg = null;
-#if !DEBUG
-            if (userId != null)
+            if (baseApi.code != null)
             {
                 using (var client = ConnectionMultiplexer.Connect(Global.REDIS))
                 {
                     try
                     {
-                        var db = client.GetDatabase(0);
-                        var tokenRedis = db.StringGet(userId);
-                        string tokenRedisStr = tokenRedis.ToString().Substring(1, tokenRedis.ToString().Length - 2);
-                        if (token != tokenRedisStr)
+                        var db = client.GetDatabase(Global.REDIS_NO);
+                        var tokenRedis = db.StringGet(baseApi.code);
+                        string tokenRedisStr = tokenRedis.ToString();
+                        if (baseApi.token != tokenRedisStr)
                         {
                             Console.WriteLine(tokenRedis);
                             msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                         }
                         else
                         {
-                            UserDao userDao = new UserDao();
-                            if (!userDao.isAuth("/"+route, userId))
+                            AuthDao authDao = new AuthDao();
+                            if (!authDao.CheckAuth("/" + route, baseApi.code))
                             {
                                 Console.WriteLine(tokenRedis);
                                 msg = new Message(CodeMessage.InterfaceRole, "InterfaceRole");
                             }
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.StackTrace);
                         msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
@@ -122,47 +126,115 @@ namespace ACBC.Buss
             }
             else
             {
-                Console.WriteLine(userId);
                 msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
             }
-#endif
             return msg;
         }
 
         /// <summary>
-        /// 执行业务方法
+        /// 验证签名
         /// </summary>
-        /// <param name="apiType">API方法组</param>
-        /// <param name="token">token</param>
-        /// <param name="method">方法名</param>
-        /// <param name="param">参数JSON对象</param>
+        /// <param name="baseApi">传入参数</param>
+        /// <param name="route">API路径</param>
+        /// <returns>验证结果，null为通过</returns>
+        private Message CheckSign(BaseApi baseApi, string route)
+        {
+            Message msg = null;
+            if (baseApi.code != null)
+            {
+                string appSecret = new AuthDao().GetAccess(baseApi.code, baseApi.appId);
+                if (appSecret == null)
+                {
+                    msg = new Message(CodeMessage.AppIDError, "AppIDError");
+                }
+                else
+                {
+                    string placeHold = "__PLACEHOLD__";
+                    string paramS = Regex.Replace(
+                        baseApi.param.ToString(), 
+                        "\"(.+?)\"", 
+                        new MatchEvaluator(
+                            (s) => 
+                            {
+                                return s.ToString().Replace(" ", placeHold);
+                            }))
+                            .Replace("\n", "")
+                            .Replace("\r", "")
+                            .Replace(" ", "")
+                            .Replace(placeHold, " ");
+                    string needMd5 = baseApi.appId + baseApi.nonceStr + appSecret + paramS;
+                    string md5S = "";
+                    using (var md5 = MD5.Create())
+                    {
+                        var result = md5.ComputeHash(Encoding.UTF8.GetBytes(needMd5));
+                        var strResult = BitConverter.ToString(result);
+                        md5S = strResult.Replace("-", "");
+                    }
+                    if(baseApi.sign != md5S)
+                    {
+                        msg = new Message(CodeMessage.SignError, "SignError");
+                    }
+                }
+            }
+            else
+            {
+                msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            return msg;
+        }
+
+        /// <summary>
+        /// Header传递关键参数处理方法
+        /// </summary>
+        /// <param name="controller">控制器</param>
+        /// <param name="baseApi">传入参数</param>
         /// <returns></returns>
-        public object BussResults(Controller controller, ApiType apiType, object param)
+        public object HeaderBussResults(Controller controller, BaseApi baseApi)
         {
             var route = "";
-            var method = "";
+            var action = "";
             var routeController = controller.RouteData.Values["controller"].ToString();
             var routeAction = controller.RouteData.Values["action"].ToString();
             route = Global.ROUTE_PX + "/" + routeController + "/" + routeAction;
-            method = routeAction.Replace("/", "");
-            var s = controller.RouteData;
-            var userId = "";
-            var token = "";
-            if (controller.Request.Headers.ContainsKey("userid") && controller.Request.Headers.ContainsKey("token"))
+            action = routeAction.Replace("/", "");
+
+            if (controller.Request.Headers.ContainsKey("userid"))
             {
-                userId = controller.Request.Headers["userid"].ToString();
-                token = controller.Request.Headers["token"].ToString();
+                baseApi.code = controller.Request.Headers["userid"].ToString();
             }
-            
-            var msg = CheckToken(apiType, userId, token, route);
+            if (controller.Request.Headers.ContainsKey("token"))
+            {
+                baseApi.token = controller.Request.Headers["token"].ToString();
+            }
+            if (controller.Request.Headers.ContainsKey("sign") && controller.Request.Headers.ContainsKey("nonceStr"))
+            {
+                baseApi.sign = controller.Request.Headers["sign"].ToString();
+                baseApi.nonceStr = controller.Request.Headers["nonceStr"].ToString();
+            }
+
+            Message msg = null;
+            switch (baseApi.GetCheckType())
+            {
+                case CheckType.Open:
+                    break;
+                case CheckType.Token:
+                    msg = CheckToken(baseApi, route);
+                    break;
+                case CheckType.Sign:
+                    msg = CheckSign(baseApi, route);
+                    break;
+                default:
+                    break;
+            }
+
             if (msg != null)
             {
                 controller.Response.Headers.Add("code", ((int)msg.code).ToString());
                 controller.Response.Headers.Add("msg", msg.msg);
                 return "";
             }
-            var obj = bussList[apiType];
-            MethodInfo methodInfo = obj.GetType().GetMethod("Do_" + method);
+            var obj = bussList[baseApi.GetApiType()];
+            MethodInfo methodInfo = obj.GetType().GetMethod("Do_" + action);
             if (methodInfo == null)
             {
                 controller.Response.Headers.Add("code", ((int)CodeMessage.InvalidMethod).ToString());
@@ -175,7 +247,7 @@ namespace ACBC.Buss
                 object data = null;
                 try
                 {
-                    data = methodInfo.Invoke(obj, new object[] { param, userId });
+                    data = methodInfo.Invoke(obj, new object[] { baseApi });
                 }
                 catch (Exception ex)
                 {
@@ -203,5 +275,71 @@ namespace ACBC.Buss
                 return data;
             }
         }
+
+        /// <summary>
+        /// Body传递关键参数处理方法
+        /// </summary>
+        /// <param name="controller">控制器</param>
+        /// <param name="baseApi">传入参数</param>
+        /// <returns></returns>
+        public object BodyBussResults(Controller controller, BaseApi baseApi)
+        {
+            var route = "";
+            var action = "";
+            var routeController = controller.RouteData.Values["controller"].ToString();
+            var routeAction = controller.RouteData.Values["action"].ToString();
+            route = Global.ROUTE_PX + "/" + routeController + "/" + routeAction + "/" + baseApi.method;
+            action = routeAction.Replace("/", "");
+            Message msg = null;
+            switch(baseApi.GetCheckType())
+            {
+                case CheckType.Open:
+                    break;
+                case CheckType.Token:
+                    msg = CheckToken(baseApi, route);
+                    break;
+                case CheckType.Sign:
+                    msg = CheckSign(baseApi, route);
+                    break;
+                default:
+                    break;
+            }
+            
+            if (msg != null)
+            {
+                return new ResultsJson(new Message(CodeMessage.InvalidToken, "InvalidToken"), null);
+            }
+            var obj = bussList[baseApi.GetApiType()];
+            MethodInfo methodInfo = obj.GetType().GetMethod("Do_" + baseApi.method);
+            if (methodInfo == null)
+            {
+                return new ResultsJson(new Message(CodeMessage.InvalidMethod, "InvalidMethod"), null);
+            }
+            else
+            {
+                Message message = null;
+                object data = null;
+                try
+                {
+                    data = methodInfo.Invoke(obj, new object[] { baseApi });
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException.GetType() == typeof(ApiException))
+                    {
+                        ApiException apiException = (ApiException)ex.InnerException;
+                        message = new Message(apiException.code, apiException.msg);
+                    }
+                    else
+                    {
+                        message = new Message(CodeMessage.InnerError, "InnerError");
+                    }
+                }
+
+                return new ResultsJson(message, data);
+            }
+        }
+
+
     }
 }

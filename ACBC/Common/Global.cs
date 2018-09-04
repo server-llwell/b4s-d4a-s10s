@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using ACBC.Dao;
 using Com.ACBC.Framework.Database;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,6 +13,8 @@ namespace ACBC.Common
     public class Global
     {
         public const string ROUTE_PX = "openapi";
+        public const int REDIS_NO = 1;
+        public const int REDIS_EXPIRY = 7200;
 
         /// <summary>
         /// 基础业务处理类对象
@@ -29,12 +32,26 @@ namespace ACBC.Common
             }
         }
 
+        public static string TokenIntoRedis(string code)
+        {
+            using (var client = ConnectionMultiplexer.Connect(REDIS))
+            {
+                var db = client.GetDatabase(REDIS_NO);
+                var expiry = new TimeSpan(0, 0, REDIS_EXPIRY);
+                var token = Guid.NewGuid().ToString();
+                bool b = db.StringSet(code, token, expiry);
+
+                return token;
+            }
+        }
+
         public static string REDIS
         {
             get
             {
 #if DEBUG
-                var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
+                //var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
+                var redis = "localhost:6379";
 #endif
 #if !DEBUG
                 var redis = "redis-api";
@@ -141,58 +158,6 @@ namespace ACBC.Common
                 return ossDir;
             }
         }
-
-        /// <summary>
-        /// OssDirOrder
-        /// </summary>
-        public static string OssDirOrder
-        {
-            get
-            {
-#if DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossDirOrder", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossDirOrder");
-#endif
-                return ossDir;
-            }
-        }
-
-        /// <summary>
-        /// ossB2BGoods
-        /// </summary>
-        public static string ossB2BGoods
-        {
-            get
-            {
-#if DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossB2BGoods", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossB2BGoods");
-#endif
-                return ossDir;
-            }
-        }
-
-        /// <summary>
-        /// ossB2BGoodsNum
-        /// </summary>
-        public static string ossB2BGoodsNum
-        {
-            get
-            {
-#if DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossB2BGoodsNum", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossB2BGoodsNum");
-#endif
-                return ossDir;
-            }
-        }
-
-#endregion
     }
+    #endregion
 }
