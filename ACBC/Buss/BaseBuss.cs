@@ -184,12 +184,32 @@ namespace ACBC.Buss
         }
 
         /// <summary>
+        /// 处理方法
+        /// </summary>
+        /// <param name="controller">控制器</param>
+        /// <param name="baseApi">传入参数</param>
+        /// <returns></returns>
+        public object BussResults(Controller controller, BaseApi baseApi)
+        {
+            switch (baseApi.GetInputType())
+            {
+                case InputType.Header:
+                    return this.HeaderBussResults(controller, baseApi);
+                case InputType.Body:
+                    return this.BodyBussResults(controller, baseApi);
+                default:
+                    return null;
+            }
+
+        }
+
+        /// <summary>
         /// Header传递关键参数处理方法
         /// </summary>
         /// <param name="controller">控制器</param>
         /// <param name="baseApi">传入参数</param>
         /// <returns></returns>
-        public object HeaderBussResults(Controller controller, BaseApi baseApi)
+        private object HeaderBussResults(Controller controller, BaseApi baseApi)
         {
             var route = "";
             var action = "";
@@ -282,7 +302,7 @@ namespace ACBC.Buss
         /// <param name="controller">控制器</param>
         /// <param name="baseApi">传入参数</param>
         /// <returns></returns>
-        public object BodyBussResults(Controller controller, BaseApi baseApi)
+        private object BodyBussResults(Controller controller, BaseApi baseApi)
         {
             var route = "";
             var action = "";

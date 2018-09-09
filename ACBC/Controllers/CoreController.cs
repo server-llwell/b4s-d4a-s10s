@@ -19,7 +19,7 @@ namespace ACBC.Controllers
         {
             if (demoApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
-            return Json(Global.BUSS.BodyBussResults(this, demoApi));
+            return Json(Global.BUSS.BussResults(this, demoApi));
         }
 
     }

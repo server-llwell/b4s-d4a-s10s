@@ -14,6 +14,12 @@ namespace ACBC.Common
         UploadApi,
     }
 
+    public enum InputType
+    {
+        Header,
+        Body,
+    }
+
     public enum CheckType
     {
         Open,
@@ -33,6 +39,7 @@ namespace ACBC.Common
 
         public abstract CheckType GetCheckType();
         public abstract ApiType GetApiType();
+        public abstract InputType GetInputType();
     }
 
     /// <summary>
@@ -43,6 +50,11 @@ namespace ACBC.Common
         public override CheckType GetCheckType()
         {
             return CheckType.Open;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Header;
         }
 
         public override ApiType GetApiType()
@@ -60,6 +72,11 @@ namespace ACBC.Common
         public override CheckType GetCheckType()
         {
             return CheckType.Sign;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
         }
 
         public override ApiType GetApiType()

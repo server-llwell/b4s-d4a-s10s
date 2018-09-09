@@ -19,7 +19,7 @@ namespace ACBC.Controllers
         [ActionName("Temp")]
         public ActionResult Temp(IFormCollection param)
         {
-            return Json(Global.BUSS.HeaderBussResults(this, new UploadApi { param = param }));
+            return Json(Global.BUSS.BussResults(this, new UploadApi { param = param }));
         }
 
     }
