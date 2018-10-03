@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Common
@@ -10,14 +11,8 @@ namespace ACBC.Common
     /// </summary>
     public enum ApiType
     {
-        DemoApi,
+        OpenApi,
         UploadApi,
-    }
-
-    public enum InputType
-    {
-        Header,
-        Body,
     }
 
     public enum CheckType
@@ -27,9 +22,16 @@ namespace ACBC.Common
         Sign,
     }
 
+    public enum InputType
+    {
+        Header,
+        Body,
+    }
+
     public abstract class BaseApi
     {
         public string appId;
+        public string lang;
         public string code;
         public string method;
         public string token;
@@ -40,6 +42,14 @@ namespace ACBC.Common
         public abstract CheckType GetCheckType();
         public abstract ApiType GetApiType();
         public abstract InputType GetInputType();
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("{2}; method:{0}; param:{1}", method, param, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            string rets = builder.ToString();
+            return rets;
+        }
     }
 
     /// <summary>
@@ -65,13 +75,13 @@ namespace ACBC.Common
     }
 
     /// <summary>
-    /// Demo类API
+    /// 完全开放
     /// </summary>
-    public class DemoApi : BaseApi
+    public class OpenApi : BaseApi
     {
         public override CheckType GetCheckType()
         {
-            return CheckType.Sign;
+            return CheckType.Open;
         }
 
         public override InputType GetInputType()
@@ -81,7 +91,7 @@ namespace ACBC.Common
 
         public override ApiType GetApiType()
         {
-            return ApiType.DemoApi;
+            return ApiType.OpenApi;
         }
 
     }

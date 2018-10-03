@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACBC", "ACBC\ACBC.csproj", "{9C22BB1E-1701-4883-8E25-95438851BF94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACBC", "ACBC\ACBC.csproj", "{9C22BB1E-1701-4883-8E25-95438851BF94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{54295310-1071-4089-B3EB-3A0BCDDD559D}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

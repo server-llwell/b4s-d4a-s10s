@@ -10,17 +10,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace ACBC.Controllers
 {
     [Produces("application/json")]
+    [Consumes("multipart/form-data", "application/json")]
     [Route(Global.ROUTE_PX + "/[controller]/[action]")]
     [EnableCors("AllowSameDomain")]
-    public class CoreController : Controller
+    public class WxController : Controller
     {
         [HttpPost]
-        public ActionResult Demos([FromBody]DemoApi demoApi)
+        public ActionResult Open([FromBody]OpenApi openApi)
         {
-            if (demoApi == null)
+            if (openApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
-            return Json(Global.BUSS.BussResults(this, demoApi));
+            return Json(Global.BUSS.BussResults(this, openApi));
         }
 
+        [HttpPost]
+        public ActionResult Upload(IFormCollection param)
+        {
+            return Json(Global.BUSS.BussResults(this, new UploadApi { param = param }));
+        }
     }
 }

@@ -1,20 +1,22 @@
 ﻿using ACBC.Buss;
 using ACBC.Dao;
 using Com.ACBC.Framework.Database;
-using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using StackExchange.Redis;
+using Senparc.Weixin.Cache.Redis;
+using Senparc.Weixin.Cache;
+using Senparc.Weixin.WxOpen.Containers;
 
 namespace ACBC.Common
 {
     public class Global
     {
-        public const string ROUTE_PX = "openapi";
+        public const string ROUTE_PX = "/api/gift";
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY = 7200;
+
+        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
+        public const string EXCHANGE_URL = "http://op.juhe.cn/onebox/exchange/query?key=08940f90d07501ace3f535e32968cf94";
 
         /// <summary>
         /// 基础业务处理类对象
@@ -30,28 +32,25 @@ namespace ACBC.Common
             {
                 DatabaseOperationWeb.TYPE = new DBManager();
             }
-        }
 
-        public static string TokenIntoRedis(string code)
-        {
-            using (var client = ConnectionMultiplexer.Connect(REDIS))
+            try
             {
-                var db = client.GetDatabase(REDIS_NO);
-                var expiry = new TimeSpan(0, 0, REDIS_EXPIRY);
-                var token = Guid.NewGuid().ToString();
-                bool b = db.StringSet(code, token, expiry);
-
-                return token;
+                RedisManager.ConfigurationOption = REDIS;
+                CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisContainerCacheStrategy.Instance );
+            }
+            catch
+            {
+                Console.WriteLine("Redis Error, Change Local");
             }
         }
 
+        
         public static string REDIS
         {
             get
             {
 #if DEBUG
-                //var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
-                var redis = "localhost:6379";
+                var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
 #endif
 #if !DEBUG
                 var redis = "redis-api";
@@ -59,6 +58,45 @@ namespace ACBC.Common
                 return redis;
             }
         }
+
+        #region 小程序相关
+
+        /// <summary>
+        /// 小程序APPID
+        /// </summary>
+        public static string APPID
+        {
+            get
+            {
+#if DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxAppId", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxAppId");
+#endif
+                return appId;
+            }
+        }
+
+        /// <summary>
+        /// 小程序APPSECRET
+        /// </summary>
+        public static string APPSECRET
+        {
+            get
+            {
+#if DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret");
+#endif
+                return appSecret;
+            }
+        }
+
+
+        #endregion
 
         #region OSS相关
 

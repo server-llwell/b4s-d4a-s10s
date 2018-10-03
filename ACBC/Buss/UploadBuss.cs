@@ -15,7 +15,7 @@ namespace ACBC.Buss
             return ApiType.UploadApi;
         }
 
-        public object Do_Temp(BaseApi baseApi)
+        public object Do_Upload(BaseApi baseApi)
         {
             var upload = (IFormCollection)baseApi.param;
             List<string> fileList = new List<string>();
@@ -39,6 +39,7 @@ namespace ACBC.Buss
                         fs.Close();
                     }
                     sm.Close();
+                    fileName = fileName + "." + aLastName;
                 }
                 fileList.Add(fileName);
             }

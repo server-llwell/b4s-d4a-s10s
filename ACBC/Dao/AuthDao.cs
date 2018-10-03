@@ -8,14 +8,6 @@ namespace ACBC.Dao
 {
     public class AuthDao
     {
-        public AuthDao()
-        {
-            if (DatabaseOperationWeb.TYPE == null)
-            {
-                DatabaseOperationWeb.TYPE = new DBManager();
-            }
-        }
-
         /// <summary>
         /// 验证当前用户是否可调用api路径
         /// </summary>
