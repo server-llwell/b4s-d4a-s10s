@@ -31,6 +31,6 @@ namespace ACBC.Common
         InterfaceRole = 4003,//接口权限不足
         InterfaceValueError = 4004,//接口的参数不对
         InterfaceDBError=4005,//接口数据库操作失败
-
+        NeedLogin = 4006,
     }
 }

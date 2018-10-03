@@ -91,7 +91,7 @@ namespace ACBC.Buss
         /// <param name="baseApi">传入参数</param>
         /// <param name="route">API路径</param>
         /// <returns>验证结果，null为通过</returns>
-        private Message CheckToken(BaseApi baseApi, string route)
+        private Message CheckToken(BaseApi baseApi, bool needLogin, string route)
         {
             Message msg = null;
             if (baseApi.token != null)
@@ -110,9 +110,18 @@ namespace ACBC.Buss
                     else
                     {
                         SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
-                        if(sessionUser == null || sessionUser.openid != sessionBag.OpenId)
+                        if (sessionUser == null)
                         {
                             msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                        }
+
+
+                        if (needLogin)
+                        {
+                            if (sessionUser.openid != sessionBag.OpenId)
+                            {
+                                msg = new Message(CodeMessage.NeedLogin, "NeedLogin");
+                            }
                         }
                     }
                 }
@@ -184,6 +193,7 @@ namespace ACBC.Buss
         /// <returns></returns>
         public object BussResults(Controller controller, BaseApi baseApi)
         {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "; " + Global.ROUTE_PX + "/" + controller.RouteData.Values["controller"] + "/" + controller.RouteData.Values["action"]);
             Console.WriteLine(baseApi.ToString());
             switch (baseApi.GetInputType())
             {
@@ -231,7 +241,10 @@ namespace ACBC.Buss
                 case CheckType.Open:
                     break;
                 case CheckType.Token:
-                    msg = CheckToken(baseApi, route);
+                    msg = CheckToken(baseApi, true, route);
+                    break;
+                case CheckType.OpenToken:
+                    msg = CheckToken(baseApi, false, route);
                     break;
                 case CheckType.Sign:
                     msg = CheckSign(baseApi, route);
@@ -309,7 +322,10 @@ namespace ACBC.Buss
                 case CheckType.Open:
                     break;
                 case CheckType.Token:
-                    msg = CheckToken(baseApi, route);
+                    msg = CheckToken(baseApi, true, route);
+                    break;
+                case CheckType.OpenToken:
+                    msg = CheckToken(baseApi, false, route);
                     break;
                 case CheckType.Sign:
                     msg = CheckSign(baseApi, route);
