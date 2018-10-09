@@ -74,6 +74,27 @@ namespace ACBC.Common
             return true;
         }
 
+        public static bool DeleteCache<T>()
+        {
+            string key = typeof(T).FullName;
+            return DeleteCache(key);
+        }
+
+        public static void ClearCache()
+        {
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                  .SelectMany(a => a.GetTypes()
+                  .Where(t => t.GetInterfaces().Contains(typeof(ICache))))
+                  .ToArray();
+            foreach (var v in types)
+            {
+                if (v.IsClass)
+                {
+                    DeleteCache(v.FullName);
+                }
+            }
+        }
+
         public static string PostHttp(string url, string body, string contentType)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
