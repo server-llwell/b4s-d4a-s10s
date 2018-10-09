@@ -1,16 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Buss
 {
     #region Sys
-    public interface ICache
+    public class BussCache
     {
-        //需要缓存数据的对象要求实现该接口
+        private string unique = "";
+        public string Unique
+        {
+            get
+            {
+                return unique;
+            }
+            set
+            {
+                unique = value;
+            }
+        }
     }
 
+    public class BussParam
+    {
+        public string GetUnique()
+        {
+            string needMd5 = "";
+            string md5S = "";
+            foreach (FieldInfo f in this.GetType().GetFields())
+            {
+                needMd5 += f.Name;
+                needMd5 += f.GetValue(this).ToString();
+            }
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(needMd5));
+                var strResult = BitConverter.ToString(result);
+                md5S = strResult.Replace("-", "");
+            }
+            return md5S;
+        }
+    }
 
     public class SessionUser
     {

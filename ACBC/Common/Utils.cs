@@ -40,9 +40,9 @@ namespace ACBC.Common
             return db.StringSet(key, valueStr, expiry);
         }
 
-        public static bool SetCache(object value, int hours, int minutes, int seconds)
+        public static bool SetCache(BussCache value, int hours, int minutes, int seconds)
         {
-            string key = value.GetType().FullName;
+            string key = value.GetType().FullName + value.Unique;
             return SetCache(key, value, hours, minutes, seconds);
         }
 
@@ -63,6 +63,12 @@ namespace ACBC.Common
             return GetCache<T>(key);
         }
 
+        public static dynamic GetCache<T>(BussParam bussParam)
+        {
+            string key = typeof(T).FullName + bussParam.GetUnique();
+            return GetCache<T>(key);
+        }
+
         public static bool DeleteCache(string key)
         {
             key = Global.NAMESPACE + "." + key;
@@ -80,11 +86,17 @@ namespace ACBC.Common
             return DeleteCache(key);
         }
 
+        public static bool DeleteCache<T>(BussParam bussParam)
+        {
+            string key = typeof(T).FullName + bussParam.GetUnique();
+            return DeleteCache(key);
+        }
+
         public static void ClearCache()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
                   .SelectMany(a => a.GetTypes()
-                  .Where(t => t.GetInterfaces().Contains(typeof(ICache))))
+                  .Where(t => t.GetInterfaces().Contains(typeof(BussCache))))
                   .ToArray();
             foreach (var v in types)
             {
