@@ -33,24 +33,39 @@ namespace ACBC.Common
 
         public static bool SetCache(string key, object value, int hours, int minutes, int seconds)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             var expiry = new TimeSpan(hours, minutes, seconds);
             string valueStr = JsonConvert.SerializeObject(value);
             return db.StringSet(key, valueStr, expiry);
         }
 
+        public static bool SetCache(object value, int hours, int minutes, int seconds)
+        {
+            string key = value.GetType().FullName;
+            return SetCache(key, value, hours, minutes, seconds);
+        }
+
         public static dynamic GetCache<T>(string key)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
-            if(db.StringGet(key).HasValue)
+            if (db.StringGet(key).HasValue)
             {
                 return JsonConvert.DeserializeObject<T>(db.StringGet(key));
             }
             return null;
         }
 
+        public static dynamic GetCache<T>()
+        {
+            string key = typeof(T).FullName;
+            return GetCache<T>(key);
+        }
+
         public static bool DeleteCache(string key)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             if (db.StringGet(key).HasValue)
             {
@@ -105,7 +120,7 @@ namespace ACBC.Common
         public static double GetExchange(string name)
         {
             ExchangeRes exchangeRes = GetCache<ExchangeRes>("EXCHANGE");
-            if(exchangeRes == null)
+            if (exchangeRes == null)
             {
                 string exchange = GetHttp(Global.EXCHANGE_URL);
                 exchangeRes = JsonConvert.DeserializeObject<ExchangeRes>(exchange);

@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 namespace ACBC.Buss
 {
     #region Sys
+    public interface ICache
+    {
+        //需要缓存数据的对象要求实现该接口
+    }
+
 
     public class SessionUser
     {

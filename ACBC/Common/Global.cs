@@ -6,12 +6,14 @@ using StackExchange.Redis;
 using Senparc.Weixin.Cache.Redis;
 using Senparc.Weixin.Cache;
 using Senparc.Weixin.WxOpen.Containers;
+using System.Collections.Generic;
 
 namespace ACBC.Common
 {
     public class Global
     {
-        public const string ROUTE_PX = "/api/gift";
+        public const string ROUTE_PX = "/api/demo";
+        public const string NAMESPACE = "com.a-cubic.demo";
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY = 7200;
 
@@ -36,7 +38,7 @@ namespace ACBC.Common
             try
             {
                 RedisManager.ConfigurationOption = REDIS;
-                CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisContainerCacheStrategy.Instance );
+                CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisContainerCacheStrategy.Instance);
             }
             catch
             {
@@ -44,17 +46,12 @@ namespace ACBC.Common
             }
         }
 
-        
+
         public static string REDIS
         {
             get
             {
-#if DEBUG
-                var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
-                var redis = "redis-api";
-#endif
+                var redis = System.Environment.GetEnvironmentVariable("redis");
                 return redis;
             }
         }
@@ -68,12 +65,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var appId = System.Environment.GetEnvironmentVariable("WxAppId", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var appId = System.Environment.GetEnvironmentVariable("WxAppId");
-#endif
                 return appId;
             }
         }
@@ -85,12 +77,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret");
-#endif
                 return appSecret;
             }
         }
@@ -107,12 +94,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var accessId = System.Environment.GetEnvironmentVariable("ossAccessId", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var accessId = System.Environment.GetEnvironmentVariable("ossAccessId");
-#endif
                 return accessId;
             }
         }
@@ -123,12 +105,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var accessKey = System.Environment.GetEnvironmentVariable("ossAccessKey", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var accessKey = System.Environment.GetEnvironmentVariable("ossAccessKey");
-#endif
                 return accessKey;
             }
         }
@@ -139,12 +116,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossHttp = System.Environment.GetEnvironmentVariable("ossHttp", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossHttp = System.Environment.GetEnvironmentVariable("ossHttp");
-#endif
                 return ossHttp;
             }
         }
@@ -155,12 +127,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossBucket = System.Environment.GetEnvironmentVariable("ossBucket", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossBucket = System.Environment.GetEnvironmentVariable("ossBucket");
-#endif
                 return ossBucket;
             }
         }
@@ -171,12 +138,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossUrl = System.Environment.GetEnvironmentVariable("ossUrl", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossUrl = System.Environment.GetEnvironmentVariable("ossUrl");
-#endif
                 return ossUrl;
             }
         }
@@ -187,12 +149,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossDir", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossDir = System.Environment.GetEnvironmentVariable("ossDir");
-#endif
                 return ossDir;
             }
         }
