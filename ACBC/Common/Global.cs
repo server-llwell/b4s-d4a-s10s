@@ -1,20 +1,24 @@
 ﻿using ACBC.Buss;
 using ACBC.Dao;
 using Com.ACBC.Framework.Database;
-using StackExchange.Redis;
 using System;
+using StackExchange.Redis;
+using Senparc.Weixin.Cache.Redis;
+using Senparc.Weixin.Cache;
+using Senparc.Weixin.WxOpen.Containers;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ACBC.Common
 {
     public class Global
     {
-        public const string ROUTE_PX = "openapi";
+        public const string ROUTE_PX = "/api/demo";
+        public const string NAMESPACE = "com.a-cubic.demo";
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY = 7200;
+
+        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
+        public const string EXCHANGE_URL = "http://op.juhe.cn/onebox/exchange/query?key=08940f90d07501ace3f535e32968cf94";
 
         /// <summary>
         /// 基础业务处理类对象
@@ -30,35 +34,56 @@ namespace ACBC.Common
             {
                 DatabaseOperationWeb.TYPE = new DBManager();
             }
-        }
 
-        public static string TokenIntoRedis(string code)
-        {
-            using (var client = ConnectionMultiplexer.Connect(REDIS))
+            try
             {
-                var db = client.GetDatabase(REDIS_NO);
-                var expiry = new TimeSpan(0, 0, REDIS_EXPIRY);
-                var token = Guid.NewGuid().ToString();
-                bool b = db.StringSet(code, token, expiry);
-
-                return token;
+                RedisManager.ConfigurationOption = REDIS;
+                CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisContainerCacheStrategy.Instance);
+            }
+            catch
+            {
+                Console.WriteLine("Redis Error, Change Local");
             }
         }
+
 
         public static string REDIS
         {
             get
             {
-#if DEBUG
-                //var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
-                var redis = "localhost:6379";
-#endif
-#if !DEBUG
-                var redis = "redis-api";
-#endif
+                var redis = System.Environment.GetEnvironmentVariable("redis");
                 return redis;
             }
         }
+
+        #region 小程序相关
+
+        /// <summary>
+        /// 小程序APPID
+        /// </summary>
+        public static string APPID
+        {
+            get
+            {
+                var appId = System.Environment.GetEnvironmentVariable("WxAppId");
+                return appId;
+            }
+        }
+
+        /// <summary>
+        /// 小程序APPSECRET
+        /// </summary>
+        public static string APPSECRET
+        {
+            get
+            {
+                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret");
+                return appSecret;
+            }
+        }
+
+
+        #endregion
 
         #region OSS相关
 
@@ -69,12 +94,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var accessId = System.Environment.GetEnvironmentVariable("ossAccessId", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var accessId = System.Environment.GetEnvironmentVariable("ossAccessId");
-#endif
                 return accessId;
             }
         }
@@ -85,12 +105,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var accessKey = System.Environment.GetEnvironmentVariable("ossAccessKey", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var accessKey = System.Environment.GetEnvironmentVariable("ossAccessKey");
-#endif
                 return accessKey;
             }
         }
@@ -101,12 +116,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossHttp = System.Environment.GetEnvironmentVariable("ossHttp", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossHttp = System.Environment.GetEnvironmentVariable("ossHttp");
-#endif
                 return ossHttp;
             }
         }
@@ -117,12 +127,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossBucket = System.Environment.GetEnvironmentVariable("ossBucket", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossBucket = System.Environment.GetEnvironmentVariable("ossBucket");
-#endif
                 return ossBucket;
             }
         }
@@ -133,12 +138,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossUrl = System.Environment.GetEnvironmentVariable("ossUrl", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossUrl = System.Environment.GetEnvironmentVariable("ossUrl");
-#endif
                 return ossUrl;
             }
         }
@@ -149,12 +149,7 @@ namespace ACBC.Common
         {
             get
             {
-#if DEBUG
-                var ossDir = System.Environment.GetEnvironmentVariable("ossDir", EnvironmentVariableTarget.User);
-#endif
-#if !DEBUG
                 var ossDir = System.Environment.GetEnvironmentVariable("ossDir");
-#endif
                 return ossDir;
             }
         }

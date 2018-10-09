@@ -25,9 +25,9 @@ namespace ACBC.Dao
 #endif
             this.str = "Server=" + url
                      + ";Port=" + port
-                     + ";Database=llwell;Uid=" + uid
+                     + ";Database=pg;Uid=" + uid
                      + ";Pwd=" + passd
-                     + ";CharSet=utf8; Encrypt=false;";
+                     + ";CharSet=utf8mb4; SslMode =none;";
             Console.Write(this.str);
             this.dbt = DBType.Mysql;
         }

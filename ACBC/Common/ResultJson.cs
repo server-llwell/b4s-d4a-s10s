@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Common
@@ -37,13 +39,21 @@ namespace ACBC.Common
                 this.success = true;
                 this.msg = new Message(CodeMessage.OK, "OK");
             }
-            
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "; " + "Message:" + this.msg.msg);
             this.data = data;
         }
 
         public bool success = true;
         public Message msg;
         public object data;
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("Message:{0}; data:{1}", msg.msg, JsonConvert.SerializeObject(data));
+            string rets = builder.ToString();
+            return rets;
+        }
     }
 
 

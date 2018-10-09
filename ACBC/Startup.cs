@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ACBC.Common;
+using ACBC.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -10,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Senparc.Weixin;
+using Senparc.Weixin.Entities;
+using Senparc.Weixin.RegisterServices;
 
 namespace ACBC
 {
@@ -53,9 +57,9 @@ namespace ACBC
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseCors("AllowSameDomain");
             app.UseMvc();
+            app.Map(Global.ROUTE_PX + "/ws", SocketController.Map);
         }
     }
 }

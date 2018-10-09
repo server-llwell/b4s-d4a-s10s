@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using Senparc.Weixin.WxOpen.Containers;
 
 namespace ACBC.Buss
 {
@@ -90,37 +91,38 @@ namespace ACBC.Buss
         /// <param name="baseApi">传入参数</param>
         /// <param name="route">API路径</param>
         /// <returns>验证结果，null为通过</returns>
-        private Message CheckToken(BaseApi baseApi, string route)
+        private Message CheckToken(BaseApi baseApi, bool needLogin, string route)
         {
             Message msg = null;
-            if (baseApi.code != null)
+            if (baseApi.token != null)
             {
-                using (var client = ConnectionMultiplexer.Connect(Global.REDIS))
+                SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+                if (sessionBag == null)
                 {
-                    try
+                    msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                }
+                else
+                {
+                    if (sessionBag.Name == null)
                     {
-                        var db = client.GetDatabase(Global.REDIS_NO);
-                        var tokenRedis = db.StringGet(baseApi.code);
-                        string tokenRedisStr = tokenRedis.ToString();
-                        if (baseApi.token != tokenRedisStr)
+                        msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                    }
+                    else
+                    {
+                        SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+                        if (sessionUser == null)
                         {
-                            Console.WriteLine(tokenRedis);
                             msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                         }
-                        else
+
+
+                        if (needLogin)
                         {
-                            AuthDao authDao = new AuthDao();
-                            if (!authDao.CheckAuth("/" + route, baseApi.code))
+                            if (sessionUser.openid != sessionBag.OpenId)
                             {
-                                Console.WriteLine(tokenRedis);
-                                msg = new Message(CodeMessage.InterfaceRole, "InterfaceRole");
+                                msg = new Message(CodeMessage.NeedLogin, "NeedLogin");
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.StackTrace);
-                        msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                     }
                 }
             }
@@ -191,6 +193,8 @@ namespace ACBC.Buss
         /// <returns></returns>
         public object BussResults(Controller controller, BaseApi baseApi)
         {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "; " + Global.ROUTE_PX + "/" + controller.RouteData.Values["controller"] + "/" + controller.RouteData.Values["action"]);
+            Console.WriteLine(baseApi.ToString());
             switch (baseApi.GetInputType())
             {
                 case InputType.Header:
@@ -202,7 +206,6 @@ namespace ACBC.Buss
             }
 
         }
-
         /// <summary>
         /// Header传递关键参数处理方法
         /// </summary>
@@ -238,7 +241,10 @@ namespace ACBC.Buss
                 case CheckType.Open:
                     break;
                 case CheckType.Token:
-                    msg = CheckToken(baseApi, route);
+                    msg = CheckToken(baseApi, true, route);
+                    break;
+                case CheckType.OpenToken:
+                    msg = CheckToken(baseApi, false, route);
                     break;
                 case CheckType.Sign:
                     msg = CheckSign(baseApi, route);
@@ -316,7 +322,10 @@ namespace ACBC.Buss
                 case CheckType.Open:
                     break;
                 case CheckType.Token:
-                    msg = CheckToken(baseApi, route);
+                    msg = CheckToken(baseApi, true, route);
+                    break;
+                case CheckType.OpenToken:
+                    msg = CheckToken(baseApi, false, route);
                     break;
                 case CheckType.Sign:
                     msg = CheckSign(baseApi, route);
@@ -355,8 +364,8 @@ namespace ACBC.Buss
                         message = new Message(CodeMessage.InnerError, "InnerError");
                     }
                 }
-
-                return new ResultsJson(message, data);
+                ResultsJson resultsJson = new ResultsJson(message, data);
+                return resultsJson;
             }
         }
 
