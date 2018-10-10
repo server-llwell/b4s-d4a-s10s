@@ -15,7 +15,9 @@ namespace ACBC.Common
         public const string ROUTE_PX = "/api/demo";
         public const string NAMESPACE = "com.a-cubic.demo";
         public const int REDIS_NO = 1;
-        public const int REDIS_EXPIRY = 7200;
+        public const int REDIS_EXPIRY_H = 1;
+        public const int REDIS_EXPIRY_M = 0;
+        public const int REDIS_EXPIRY_S = 0;
 
         public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
         public const string EXCHANGE_URL = "http://op.juhe.cn/onebox/exchange/query?key=08940f90d07501ace3f535e32968cf94";
