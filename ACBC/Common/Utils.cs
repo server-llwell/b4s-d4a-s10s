@@ -76,6 +76,7 @@ namespace ACBC.Common
 
         public static void DeleteCache(string key)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             if (db.StringGet(key).HasValue)
             {
