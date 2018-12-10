@@ -46,6 +46,11 @@ namespace ACBC.Common
             return SetCache(key, value, hours, minutes, seconds);
         }
 
+        public static bool SetCache(BussCache value)
+        {
+            return SetCache(value, Global.REDIS_EXPIRY_H, Global.REDIS_EXPIRY_M, Global.REDIS_EXPIRY_S);
+        }
+
         public static dynamic GetCache<T>(string key)
         {
             key = Global.NAMESPACE + "." + key;
@@ -69,40 +74,49 @@ namespace ACBC.Common
             return GetCache<T>(key);
         }
 
-        public static bool DeleteCache(string key)
+        public static void DeleteCache(string key)
         {
             key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             if (db.StringGet(key).HasValue)
             {
-                return db.KeyDelete(key);
+                db.KeyDelete(key);
             }
-            return true;
         }
 
-        public static bool DeleteCache<T>()
+        public static void DeleteCacheAll(string key)
+        {
+            key = Global.NAMESPACE + "." + key + "*";
+            var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
+            var server = RedisManager.Manager.GetServer(Global.REDIS);
+            var keys = server.Keys(database: db.Database, pattern: key);
+            db.KeyDelete(keys.ToArray());
+        }
+
+        public static void DeleteCache<T>(bool delChild = false)
         {
             string key = typeof(T).FullName;
-            return DeleteCache(key);
-        }
-
-        public static bool DeleteCache<T>(BussParam bussParam)
-        {
-            string key = typeof(T).FullName + bussParam.GetUnique();
-            return DeleteCache(key);
+            if (delChild)
+            {
+                DeleteCacheAll(key);
+            }
+            else
+            {
+                DeleteCache(key);
+            }
         }
 
         public static void ClearCache()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
                   .SelectMany(a => a.GetTypes()
-                  .Where(t => t.GetInterfaces().Contains(typeof(BussCache))))
+                  .Where(t => typeof(BussCache).Equals(t.BaseType)))
                   .ToArray();
             foreach (var v in types)
             {
                 if (v.IsClass)
                 {
-                    DeleteCache(v.FullName);
+                    DeleteCacheAll(v.FullName);
                 }
             }
         }
