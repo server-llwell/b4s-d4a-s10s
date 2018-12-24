@@ -13,6 +13,7 @@ namespace ACBC.Common
     {
         OpenApi,
         UploadApi,
+        DashboardApi,
     }
 
     public enum CheckType
@@ -94,6 +95,26 @@ namespace ACBC.Common
         {
             return ApiType.OpenApi;
         }
+    }
 
+    /// <summary>
+    /// 完全开放
+    /// </summary>
+    public class DashboardApi : BaseApi
+    {
+        public override CheckType GetCheckType()
+        {
+            return CheckType.OpenToken;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.DashboardApi;
+        }
     }
 }

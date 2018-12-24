@@ -109,6 +109,15 @@ namespace ACBC.Buss
         public string userType;
     }
 
+    public class GetOnlineShopDataParam : BussParam
+    {
+        public string shopId;
+    }
+
+    public class GetOfflineShopDataParam : BussParam
+    {
+        public string shopId;
+    }
     #endregion
 
     #region DaoObjs
@@ -125,5 +134,166 @@ namespace ACBC.Buss
         public string sex;
     }
 
+    public class OnlineData : BussCache
+    {
+        public Shops shops;
+        public PartSales partSales;
+        public Proportion proportion;
+        public SalesTrendData salesTrendData;
+        public OrderTrendData orderTrendData;
+        public BestSellerGoodsData bestSellerGoodsData;
+        public LowSellerGoodsData lowSellerGoodsData;
+        public AccountsReceivableTRateData accountsReceivableTRateData;
+    }
+
+    public class OfflineData : BussCache
+    {
+        public Shops shops;
+        public PartSales partSales;
+        public Proportion proportion;
+        public SalesTrendData salesTrendData;
+        public OrderTrendData orderTrendData;
+        public BestSellerGoodsData bestSellerGoodsData;
+        public LowSellerGoodsData lowSellerGoodsData;
+        public AccountsReceivableTRateData accountsReceivableTRateData;
+        public MarketingRateData marketingRateData;
+        public StockTRateData stockTRateData;
+
+    }
+
+    public class Shops
+    {
+        public List<Shop> list = new List<Shop>();
+    }
+
+    public class Shop
+    {
+        public string shopId;
+        public string shopName;
+    }
+
+    public class MonthGroups
+    {
+        public List<PartSalesMonth> list = new List<PartSalesMonth>();
+    }
+
+    public class PartSales
+    {
+        public string dailyAverage;
+        public PartSalesDay partSalesDay;
+        public MonthGroups monthGroups;
+    }
+
+    public class PartSalesDay
+    {
+        public string upOrDown;
+        public string rate;
+        public string actualAmount;
+        public string supplyAmount;
+        public string orderNum;
+    }
+
+    public class PartSalesMonth
+    {
+        public string month;
+        public string monthDisplay;
+        public string upOrDown;
+        public string rate;
+        public string actualAmount;
+        public string supplyAmount;
+        public string orderNum;
+    }
+
+    public class Proportion
+    {
+        public ProportionLegend proportionLegend;
+        public ProportionValues proportionValues;
+    }
+
+    public class ProportionLegend
+    {
+        public string shopName;
+        public string percentDisplay;
+    }
+
+    public class ProportionValues
+    {
+        public string shopName;
+        public double percent;
+        public string constValue;
+    }
+
+    public class SalesTrendData
+    {
+        public List<DaySalesData> list = new List<DaySalesData>();
+    }
+
+    public class DaySalesData
+    {
+        public string money;
+        public string day;
+        public string title;
+    }
+
+    public class OrderTrendData
+    {
+        public List<DayOrderData> list = new List<DayOrderData>();
+    }
+
+    public class DayOrderData
+    {
+        public string count;
+        public string day;
+        public string title;
+    }
+
+    public class BestSellerGoodsData
+    {
+        public List<SellerGoodsData> list = new List<SellerGoodsData>();
+    }
+
+    public class SellerGoodsData
+    {
+        public string brand;
+        public string count;
+    }
+
+    public class LowSellerGoodsData
+    {
+        public List<SellerGoodsData> list = new List<SellerGoodsData>();
+    }
+
+    public class AccountsReceivableTRateData
+    {
+        public List<AccountsReceivableTMonthData> list = new List<AccountsReceivableTMonthData>();
+    }
+
+    public class AccountsReceivableTMonthData
+    {
+        public double rate;
+        public string title;
+    }
+
+    public class MarketingRateData
+    {
+        public List<MarketingDayData> list = new List<MarketingDayData>();
+    }
+
+    public class MarketingDayData
+    {
+        public double rate;
+        public string title;
+    }
+
+    public class StockTRateData
+    {
+        public List<StockTMonthData> list = new List<StockTMonthData>();
+    }
+
+    public class StockTMonthData
+    {
+        public double rate;
+        public string title;
+    }
     #endregion
 }

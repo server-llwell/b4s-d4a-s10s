@@ -34,7 +34,7 @@ namespace ACBC.Buss
                 
                 SessionUser sessionUser = new SessionUser();
                 sessionUser.userType = "";
-                sessionUser.openid = sessionBag.OpenId;
+                //sessionUser.openid = sessionBag.OpenId;
                 sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
                 SessionContainer.Update(sessionBag.Key, sessionBag);
                 return new { token = sessionBag.Key, isReg = true };

@@ -24,9 +24,11 @@ namespace ACBC.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(IFormCollection param)
+        public ActionResult Dashboard([FromBody]DashboardApi dashboardApi)
         {
-            return Json(Global.BUSS.BussResults(this, new UploadApi { param = param }));
+            if (dashboardApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, dashboardApi));
         }
     }
 }

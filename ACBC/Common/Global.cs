@@ -12,8 +12,8 @@ namespace ACBC.Common
 {
     public class Global
     {
-        public const string ROUTE_PX = "/api/demo";
-        public const string NAMESPACE = "com.a-cubic.demo";
+        public const string ROUTE_PX = "/api/analysis";
+        public const string NAMESPACE = "net.llwell.analysis";
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY_H = 1;
         public const int REDIS_EXPIRY_M = 0;
