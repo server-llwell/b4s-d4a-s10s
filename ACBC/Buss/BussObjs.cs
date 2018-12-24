@@ -206,8 +206,8 @@ namespace ACBC.Buss
 
     public class Proportion
     {
-        public ProportionLegend proportionLegend;
-        public ProportionValues proportionValues;
+        public List<ProportionLegend> proportionLegend;
+        public List<ProportionValues> proportionValues;
     }
 
     public class ProportionLegend
