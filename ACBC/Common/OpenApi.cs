@@ -104,7 +104,7 @@ namespace ACBC.Common
     {
         public override CheckType GetCheckType()
         {
-            return CheckType.OpenToken;
+            return CheckType.Open;
         }
 
         public override InputType GetInputType()
