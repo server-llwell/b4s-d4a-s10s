@@ -202,7 +202,7 @@ namespace ACBC.Dao
             DateTime dtime = DateTime.Now;
             string today = dtime.ToString("yyyy-MM-dd");
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
-            List<ProportionLegend> proportionLegendList = null;
+            List<ProportionLegend> proportionLegendList = new List<ProportionLegend>();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
             string sql = builder.ToString();
@@ -252,7 +252,7 @@ namespace ACBC.Dao
             DateTime dtime = DateTime.Now;
             string today = dtime.ToString("yyyy-MM-dd");
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
-            List<ProportionValues> proportionValuesList = null;
+            List<ProportionValues> proportionValuesList = new List<ProportionValues>();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
             string sql = builder.ToString();
@@ -617,9 +617,9 @@ namespace ACBC.Dao
             DateTime dtime = DateTime.Now;
             string today = dtime.ToString("yyyy-MM-dd");
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
-            List<ProportionLegend> proportionLegendList = null;
+            List<ProportionLegend> proportionLegendList = new List<ProportionLegend>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY, yesterday, today);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -667,9 +667,9 @@ namespace ACBC.Dao
             DateTime dtime = DateTime.Now;
             string today = dtime.ToString("yyyy-MM-dd");
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
-            List<ProportionValues> proportionValuesList = null;
+            List<ProportionValues> proportionValuesList = new List<ProportionValues>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY, yesterday, today);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -906,66 +906,66 @@ namespace ACBC.Dao
             public const string SELECT_SHOPID_BY_ONLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='1' ";
             public const string SELECT_SHOPID_BY_OFFLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='0' ";
             public const string SELECT_DAILYAVERAGE_BY_SHOPID = "SELECT ROUND( SUM(TRADEAMOUNT)/COUNT(*),2) as DAILY_AVERAGE " +
-                                                                "FROM T_ORDER_LIST WHERE PURCHASERCODE = {0}";
+                                                                "FROM T_ORDER_LIST WHERE ('{0}'='' or PURCHASERCODE = '{0}' ) ";
             public const string SELECT_AMOUNT_BY_SHOPID_DATE = "SELECT SUM(G.SKUUNITPRICE*G.QUANTITY) as ACTUAL_AMOUNT,SUM(G.PURCHASEPRICE*G.QUANTITY) as SUPPLY_AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {0} " +
-                               "AND TRADETIME BETWEEN STR_TO_DATE({1}, '%Y-%m-%d') AND STR_TO_DATE({2}, '%Y-%m-%d')";
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                               "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')";
             public const string SELECT_RATE_BY_SHOPID_DATE = "SELECT ROUND((A.S-B.S)/B.S*100,2) as RATE  " +
                 "FROM (SELECT SUM(G.SKUUNITPRICE*G.QUANTITY) S FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
-                      "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {0} " +
-                            "AND TRADETIME BETWEEN STR_TO_DATE({1}, '%Y-%m-%d') AND STR_TO_DATE({2}, '%Y-%m-%d')) A, " +
+                      "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                            "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')) A, " +
                      "(SELECT SUM(G.SKUUNITPRICE* G.QUANTITY) S FROM T_ORDER_LIST O, T_ORDER_GOODS G " +
                       "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = 'WXCCAIGOU' " +
-                            "AND TRADETIME BETWEEN STR_TO_DATE({3}, '%Y-%m-%d') AND STR_TO_DATE({4}, '%Y-%m-%d')) B";
+                            "AND TRADETIME BETWEEN STR_TO_DATE('{3}', '%Y-%m-%d') AND STR_TO_DATE('{4}', '%Y-%m-%d')) B";
             public const string SELECT_ORDERNUM_BY_SHOPID_DATE = "SELECT COUNT(*) as ORDER_NUM FROM T_ORDER_LIST O " +
-                "WHERE O.MERCHANTORDERID  AND O.PURCHASERCODE = {0} " +
-                "AND TRADETIME BETWEEN STR_TO_DATE({1}, '%Y-%m-%d') AND STR_TO_DATE({2}, '%Y-%m-%d')";
+                "WHERE O.MERCHANTORDERID  AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')";
             public const string SELECT_AMOUNT_BY_SHOPID_MONTH = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m') MONTH,SUM(G.SKUUNITPRICE*G.QUANTITY) ACTUAL_AMOUNT,SUM(G.PURCHASEPRICE) SUPPLY_AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {0} GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ORDER BY MONTH DESC";
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ORDER BY MONTH DESC";
             public const string SELECT_ORDERNUM_BY_SHOPID_MONTH = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m') as MONTH,COUNT(*)as ORDER_NUM " +
                 "FROM T_ORDER_LIST O " +
-                "WHERE  O.PURCHASERCODE = {0} GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ";
+                "WHERE  ('{0}'='' or O.PURCHASERCODE = '{0}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ";
             public const string SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G ,T_USER_LIST U  " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE({0}, '%Y-%m-%d') AND STR_TO_DATE({1}, '%Y-%m-%d') " +
+                      "AND TRADETIME BETWEEN STR_TO_DATE('{0}', '%Y-%m-%d') AND STR_TO_DATE('{1}', '%Y-%m-%d') " +
                       "AND APITYPE = 1 AND U.USERTYPE= '2' " +
                 "GROUP BY PURCHASERCODE " +
                 "UNION  " +
                 "SELECT 'BBC' AS USERNAME, SUM(G.SKUUNITPRICE* G.QUANTITY) as AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G, T_USER_LIST U " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE({2}, '%Y-%m-%d') AND STR_TO_DATE({3}, '%Y-%m-%d') " +
+                      "AND TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') " +
                       "AND APITYPE = 1 AND U.USERTYPE= '3'";
             public const string SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) as AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID  AND APITYPE = 2 " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE('2018-12-01', '%Y-%M-%D') AND STR_TO_DATE('2018-12-30', '%Y-%M-%D') " +
+                      "AND TRADETIME BETWEEN STR_TO_DATE({0}, '%Y-%M-%D') AND STR_TO_DATE({1}, '%Y-%M-%D') " +
                 "GROUP BY PURCHASERCODE";
-            public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
+            public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
                 "FROM T_ORDER_LIST O " +
-                "WHERE PURCHASERCODE = {0} AND TRADETIME BETWEEN STR_TO_DATE({1}, '%Y-%m-%d') AND STR_TO_DATE({2}, '%Y-%m-%d') " +
+                "WHERE ('{0}'='' or PURCHASERCODE = '{0}') AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') " +
                 "ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ASC ";
             public const string SELECT_BEST_GOODS_BY_SHOPID= "SELECT G.BARCODE,G.GOODSNAME,SUM(G.QUANTITY) AS COUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {0} " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
                 "GROUP BY G.BARCODE " +
                 "ORDER BY SUM(G.QUANTITY) DESC   LIMIT 10";
             public const string SELECT_LOW_GOODS_BY_SHOPID= "SELECT G.BARCODE,G.GOODSNAME,SUM(G.QUANTITY) AS COUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {0} " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
                 "GROUP BY G.BARCODE " +
                 "ORDER BY SUM(G.QUANTITY) ASC LIMIT 10";
-            public const string SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID = "SELECT * FROM T_ACCOUNT_MONTH_RECEIVABLE WHERE USERCODE = {0}";
-            public const string SELECT_MARKETING_RATE_BY_SHOPID_DAY = "SELECT  DATE1,ROUND(COUNT(*)/(SELECT COUNT(*) AS RATE FROM T_GOODS_DISTRIBUTOR_PRICE WHERE USERCODE = {0})*100,2) " +
-                "FROM (SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') DATE1,BARCODE FROM T_ORDER_LIST O, T_ORDER_GOODS G WHERE  O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = {1}' GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ,BARCODE) A " +
+            public const string SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID = "SELECT * FROM T_ACCOUNT_MONTH_RECEIVABLE WHERE ('{0}'='' or USERCODE = '{0}')";
+            public const string SELECT_MARKETING_RATE_BY_SHOPID_DAY = "SELECT  DATE1,ROUND(COUNT(*)/(SELECT COUNT(*) FROM T_GOODS_DISTRIBUTOR_PRICE WHERE ('{0}'='' or USERCODE = '{0}'))*100,2)  AS RATE " +
+                "FROM (SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') DATE1,BARCODE FROM T_ORDER_LIST O, T_ORDER_GOODS G WHERE  O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{1}'='' or O.PURCHASERCODE = '{1}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ,BARCODE) A " +
                 "GROUP BY DATE1 ORDER BY DATE1 DESC  LIMIT 10";
-            public const string SELECT_STOCK_BY_SHOPID_DAY = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') AS TITLE ,SUM(G.QUANTITY),ROUND(SUM(G.QUANTITY)/( (SELECT SUM(PNUM) FROM T_GOODS_DISTRIBUTOR_PRICE WHERE USERCODE ={0} ) /DATE_FORMAT(NOW(),'%d')),2) AS RATE " +
+            public const string SELECT_STOCK_BY_SHOPID_DAY = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') AS TITLE ,SUM(G.QUANTITY),ROUND(SUM(G.QUANTITY)/( (SELECT SUM(PNUM) FROM T_GOODS_DISTRIBUTOR_PRICE WHERE ('{0}'='' or USERCODE ='{0}') ) /DATE_FORMAT(NOW(),'%d')),2) AS RATE " +
                 "FROM T_ORDER_LIST O ,T_ORDER_GOODS G " +
-                "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE({2}, '%Y-%m-%d') AND STR_TO_DATE({3}, '%Y-%m-%d') AND PURCHASERCODE = {1} " +
+                "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') AND ('{1}'='' or PURCHASERCODE = '{1}') " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') DESC LIMIT 10";
 
         }

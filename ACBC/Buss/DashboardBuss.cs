@@ -65,15 +65,18 @@ namespace ACBC.Buss
                     list = dashboardDao.OnlineGetAccountsReceivableTRateList(shopId)
                 };
 
-                onlineData.accountsReceivableTRateData = accountsReceivableTRateData;
-                onlineData.bestSellerGoodsData = bestSellerGoodsData;
-                onlineData.lowSellerGoodsData = lowSellerGoodsData;
-                onlineData.orderTrendData = orderTrendData;
-                onlineData.partSales = partSales;
-                onlineData.proportion = proportion;
-                onlineData.salesTrendData = salesTrendData;
-                onlineData.shops = shops;
-
+                onlineData = new OnlineData
+                {
+                    accountsReceivableTRateData = accountsReceivableTRateData,
+                    bestSellerGoodsData = bestSellerGoodsData,
+                    lowSellerGoodsData = lowSellerGoodsData,
+                    orderTrendData = orderTrendData,
+                    partSales = partSales,
+                    proportion = proportion,
+                    salesTrendData = salesTrendData,
+                    shops = shops
+                };
+                onlineData.Unique = getOnlineShopDataParam.GetUnique();
                 Utils.SetCache(onlineData, 1, 0, 0);
             }
 
@@ -144,7 +147,7 @@ namespace ACBC.Buss
                 {
                     list = dashboardDao.OfflineGetStockTMonthList(shopId)
                 };
-
+                offlineData = new OfflineData();
                 offlineData.accountsReceivableTRateData = accountsReceivableTRateData;
                 offlineData.bestSellerGoodsData = bestSellerGoodsData;
                 offlineData.lowSellerGoodsData = lowSellerGoodsData;
@@ -155,7 +158,7 @@ namespace ACBC.Buss
                 offlineData.shops = shops;
                 offlineData.marketingRateData = marketingRateData;
                 offlineData.stockTRateData = stockTRateData;
-
+                offlineData.Unique = getOfflineShopDataParam.GetUnique();
                 Utils.SetCache(offlineData, 1, 0, 0);
             }
 
