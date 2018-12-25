@@ -939,11 +939,12 @@ namespace ACBC.Dao
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
                       "AND TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') " +
                       "AND APITYPE = 1 AND U.USERTYPE= '3'";
-            public const string SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) as AMOUNT " +
-                "FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID  AND APITYPE = 2 " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE({0}, '%Y-%M-%D') AND STR_TO_DATE({1}, '%Y-%M-%D') " +
-                "GROUP BY PURCHASERCODE";
+            public const string SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
+                "FROM T_ORDER_LIST O,T_ORDER_GOODS G ,T_USER_LIST U  " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
+                      "AND TRADETIME BETWEEN STR_TO_DATE('{0}', '%Y-%m-%d') AND STR_TO_DATE('{1}', '%Y-%m-%d') " +
+                      "AND APITYPE = 2 AND U.USERTYPE= '2' " +
+                "GROUP BY PURCHASERCODE ";
             public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
                 "FROM T_ORDER_LIST O " +
                 "WHERE ('{0}'='' or PURCHASERCODE = '{0}') AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') " +
