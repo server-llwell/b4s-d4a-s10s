@@ -24,6 +24,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
+                Shop shop1 = new Shop
+                {
+                    shopId = "",
+                    shopName = "全部店铺",
+                };
+                shops.list.Add(shop1);
                 foreach (DataRow dr in dt.Rows)
                 {
                     Shop shop = new Shop
@@ -44,7 +50,7 @@ namespace ACBC.Dao
         public string OnlineGetDailyAverage(string shopId)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_DAILYAVERAGE_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_DAILYAVERAGE_BY_SHOPID, shopId,"1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
@@ -68,7 +74,7 @@ namespace ACBC.Dao
             string lastWeekToday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             PartSalesDay partSalesDay = null;
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_DATE, shopId, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_DATE, shopId, yesterday, today, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
@@ -80,7 +86,7 @@ namespace ACBC.Dao
                 string upOrDown = "0";
                 //处理比率
                 StringBuilder builder1 = new StringBuilder();
-                builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday);
+                builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday, "1");
                 string sql1 = builder1.ToString();
                 DataTable dt1 = DatabaseOperationWeb.ExecuteSelectDS(sql1, "T").Tables[0];
                 if (dt1 != null && dt1.Rows.Count == 1)
@@ -101,12 +107,28 @@ namespace ACBC.Dao
                 }
                 //处理订单数
                 StringBuilder builder2 = new StringBuilder();
-                builder2.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_DATE, shopId, yesterday, today);
+                builder2.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_DATE, shopId, yesterday, today, "1");
                 string sql2 = builder2.ToString();
                 DataTable dt2 = DatabaseOperationWeb.ExecuteSelectDS(sql2, "T").Tables[0];
                 if (dt2 != null && dt2.Rows.Count == 1)
                 {
                     orderNum = dt2.Rows[0]["ORDER_NUM"].ToString();
+                }
+                if (actualAmount == "")
+                {
+                    actualAmount = "0";
+                }
+                if (supplyAmount == "")
+                {
+                    supplyAmount = "0";
+                }
+                if (rate == "")
+                {
+                    rate = "0";
+                }
+                if (orderNum == "")
+                {
+                    orderNum = "0";
                 }
                 partSalesDay = new PartSalesDay
                 {
@@ -129,14 +151,14 @@ namespace ACBC.Dao
         {
             MonthGroups monthGroups = new MonthGroups();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
                 //查询订单数
                 StringBuilder builder1 = new StringBuilder();
-                builder1.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_MONTH, shopId);
+                builder1.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_MONTH, shopId, "1");
                 string sql1 = builder1.ToString();
                 DataTable dt1 = DatabaseOperationWeb.ExecuteSelectDS(sql1, "T").Tables[0];
 
@@ -304,7 +326,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             List<DaySalesData> list = new List<DaySalesData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday,today);
+            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday,today, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -342,7 +364,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             List<DayOrderData> list = new List<DayOrderData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -377,7 +399,7 @@ namespace ACBC.Dao
         {
             List<SellerGoodsData> list = new List<SellerGoodsData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_BEST_GOODS_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_BEST_GOODS_BY_SHOPID, shopId, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -399,7 +421,7 @@ namespace ACBC.Dao
         {
             List<SellerGoodsData> list = new List<SellerGoodsData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_LOW_GOODS_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_LOW_GOODS_BY_SHOPID, shopId, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -451,6 +473,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
+                Shop shop1 = new Shop
+                {
+                    shopId = "",
+                    shopName = "全部店铺",
+                };
+                shops.list.Add(shop1);
                 foreach (DataRow dr in dt.Rows)
                 {
                     Shop shop = new Shop
@@ -467,7 +495,7 @@ namespace ACBC.Dao
         public string OfflineGetDailyAverage(string shopId)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_DAILYAVERAGE_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_DAILYAVERAGE_BY_SHOPID, shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
@@ -487,7 +515,7 @@ namespace ACBC.Dao
             string lastWeekToday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             PartSalesDay partSalesDay = null;
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_DATE, shopId, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_DATE, shopId, yesterday, today, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
@@ -499,7 +527,7 @@ namespace ACBC.Dao
                 string upOrDown = "0";
                 //处理比率
                 StringBuilder builder1 = new StringBuilder();
-                builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday);
+                builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday, "2");
                 string sql1 = builder1.ToString();
                 DataTable dt1 = DatabaseOperationWeb.ExecuteSelectDS(sql1, "T").Tables[0];
                 if (dt1 != null && dt1.Rows.Count == 1)
@@ -520,12 +548,28 @@ namespace ACBC.Dao
                 }
                 //处理订单数
                 StringBuilder builder2 = new StringBuilder();
-                builder2.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_DATE, shopId, yesterday, today);
+                builder2.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_DATE, shopId, yesterday, today, "2");
                 string sql2 = builder2.ToString();
                 DataTable dt2 = DatabaseOperationWeb.ExecuteSelectDS(sql2, "T").Tables[0];
                 if (dt2 != null && dt2.Rows.Count == 1)
                 {
                     orderNum = dt2.Rows[0]["ORDER_NUM"].ToString();
+                }
+                if (actualAmount == "")
+                {
+                    actualAmount = "0";
+                }
+                if (supplyAmount == "")
+                {
+                    supplyAmount = "0";
+                }
+                if (rate == "")
+                {
+                    rate = "0";
+                }
+                if (orderNum == "")
+                {
+                    orderNum = "0";
                 }
                 partSalesDay = new PartSalesDay
                 {
@@ -544,14 +588,14 @@ namespace ACBC.Dao
         {
             MonthGroups monthGroups = new MonthGroups();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
                 //查询订单数
                 StringBuilder builder1 = new StringBuilder();
-                builder1.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_MONTH, shopId);
+                builder1.AppendFormat(DashboardSqls.SELECT_ORDERNUM_BY_SHOPID_MONTH, shopId, "2");
                 string sql1 = builder1.ToString();
                 DataTable dt1 = DatabaseOperationWeb.ExecuteSelectDS(sql1, "T").Tables[0];
 
@@ -719,7 +763,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             List<DaySalesData> list = new List<DaySalesData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -757,7 +801,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-7).ToString("yyyy-MM-dd");
             List<DayOrderData> list = new List<DayOrderData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_SEVENAMOUNT_BY_SHOPID, shopId, yesterday, today, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -792,7 +836,7 @@ namespace ACBC.Dao
         {
             List<SellerGoodsData> list = new List<SellerGoodsData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_BEST_GOODS_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_BEST_GOODS_BY_SHOPID, shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -814,7 +858,7 @@ namespace ACBC.Dao
         {
             List<SellerGoodsData> list = new List<SellerGoodsData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_LOW_GOODS_BY_SHOPID, shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_LOW_GOODS_BY_SHOPID, shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -858,7 +902,7 @@ namespace ACBC.Dao
         {
             List<MarketingDayData> list = new List<MarketingDayData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_MARKETING_RATE_BY_SHOPID_DAY, shopId,shopId);
+            builder.AppendFormat(DashboardSqls.SELECT_MARKETING_RATE_BY_SHOPID_DAY, shopId,shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -883,7 +927,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddMonths(-1).ToString("yyyy-MM-dd");
             List<StockTMonthData> list = new List<StockTMonthData>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_STOCK_BY_SHOPID_DAY, shopId,shopId, yesterday,today);
+            builder.AppendFormat(DashboardSqls.SELECT_STOCK_BY_SHOPID_DAY, shopId,shopId, yesterday,today, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -906,27 +950,27 @@ namespace ACBC.Dao
             public const string SELECT_SHOPID_BY_ONLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='1' ";
             public const string SELECT_SHOPID_BY_OFFLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='0' ";
             public const string SELECT_DAILYAVERAGE_BY_SHOPID = "SELECT ROUND( SUM(TRADEAMOUNT)/COUNT(*),2) as DAILY_AVERAGE " +
-                                                                "FROM T_ORDER_LIST WHERE ('{0}'='' or PURCHASERCODE = '{0}' ) ";
+                                                                "FROM T_ORDER_LIST WHERE ('{0}'='' or PURCHASERCODE = '{0}' ) AND APITYPE='{1}' ";
             public const string SELECT_AMOUNT_BY_SHOPID_DATE = "SELECT SUM(G.SKUUNITPRICE*G.QUANTITY) as ACTUAL_AMOUNT,SUM(G.PURCHASEPRICE*G.QUANTITY) as SUPPLY_AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}')  AND APITYPE='{3}' " +
                                "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')";
             public const string SELECT_RATE_BY_SHOPID_DATE = "SELECT ROUND((A.S-B.S)/B.S*100,2) as RATE  " +
                 "FROM (SELECT SUM(G.SKUUNITPRICE*G.QUANTITY) S FROM T_ORDER_LIST O,T_ORDER_GOODS G " +
                       "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
-                            "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')) A, " +
+                            "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')  AND APITYPE='{5}' ) A, " +
                      "(SELECT SUM(G.SKUUNITPRICE* G.QUANTITY) S FROM T_ORDER_LIST O, T_ORDER_GOODS G " +
                       "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = 'WXCCAIGOU' " +
-                            "AND TRADETIME BETWEEN STR_TO_DATE('{3}', '%Y-%m-%d') AND STR_TO_DATE('{4}', '%Y-%m-%d')) B";
+                            "AND TRADETIME BETWEEN STR_TO_DATE('{3}', '%Y-%m-%d') AND STR_TO_DATE('{4}', '%Y-%m-%d')  AND APITYPE='{5}' ) B";
             public const string SELECT_ORDERNUM_BY_SHOPID_DATE = "SELECT COUNT(*) as ORDER_NUM FROM T_ORDER_LIST O " +
                 "WHERE O.MERCHANTORDERID  AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
-                "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d')";
+                "AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') AND APITYPE='{3}' ";
             public const string SELECT_AMOUNT_BY_SHOPID_MONTH = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m') MONTH,SUM(G.SKUUNITPRICE*G.QUANTITY) ACTUAL_AMOUNT,SUM(G.PURCHASEPRICE) SUPPLY_AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ORDER BY MONTH DESC";
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') AND APITYPE='{1}'  GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ORDER BY MONTH DESC";
             public const string SELECT_ORDERNUM_BY_SHOPID_MONTH = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m') as MONTH,COUNT(*)as ORDER_NUM " +
                 "FROM T_ORDER_LIST O " +
-                "WHERE  ('{0}'='' or O.PURCHASERCODE = '{0}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ";
+                "WHERE  ('{0}'='' or O.PURCHASERCODE = '{0}') AND APITYPE='{1}'  GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ";
             public const string SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G ,T_USER_LIST U  " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
@@ -947,26 +991,26 @@ namespace ACBC.Dao
                 "GROUP BY PURCHASERCODE ";
             public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
                 "FROM T_ORDER_LIST O " +
-                "WHERE ('{0}'='' or PURCHASERCODE = '{0}') AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') " +
+                "WHERE ('{0}'='' or PURCHASERCODE = '{0}') AND APITYPE='{3}'  AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') " +
                 "ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ASC ";
             public const string SELECT_BEST_GOODS_BY_SHOPID= "SELECT G.BARCODE,G.GOODSNAME,SUM(G.QUANTITY) AS COUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}')  AND APITYPE='{1}' " +
                 "GROUP BY G.BARCODE " +
                 "ORDER BY SUM(G.QUANTITY) DESC   LIMIT 10";
             public const string SELECT_LOW_GOODS_BY_SHOPID= "SELECT G.BARCODE,G.GOODSNAME,SUM(G.QUANTITY) AS COUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G  " +
-                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}') " +
+                "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{0}'='' or O.PURCHASERCODE = '{0}')  AND APITYPE='{1}' " +
                 "GROUP BY G.BARCODE " +
                 "ORDER BY SUM(G.QUANTITY) ASC LIMIT 10";
-            public const string SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID = "SELECT * FROM T_ACCOUNT_MONTH_RECEIVABLE WHERE ('{0}'='' or USERCODE = '{0}')";
+            public const string SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID = "SELECT * FROM T_ACCOUNT_MONTH_RECEIVABLE WHERE ('{0}'='' or USERCODE = '{0}') ";
             public const string SELECT_MARKETING_RATE_BY_SHOPID_DAY = "SELECT  DATE1,ROUND(COUNT(*)/(SELECT COUNT(*) FROM T_GOODS_DISTRIBUTOR_PRICE WHERE ('{0}'='' or USERCODE = '{0}'))*100,2)  AS RATE " +
-                "FROM (SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') DATE1,BARCODE FROM T_ORDER_LIST O, T_ORDER_GOODS G WHERE  O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{1}'='' or O.PURCHASERCODE = '{1}') GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ,BARCODE) A " +
+                "FROM (SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') DATE1,BARCODE FROM T_ORDER_LIST O, T_ORDER_GOODS G WHERE  O.MERCHANTORDERID = G.MERCHANTORDERID AND ('{1}'='' or O.PURCHASERCODE = '{1}') AND APITYPE='{2}'  GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ,BARCODE) A " +
                 "GROUP BY DATE1 ORDER BY DATE1 DESC  LIMIT 10";
             public const string SELECT_STOCK_BY_SHOPID_DAY = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') AS TITLE ,SUM(G.QUANTITY),ROUND(SUM(G.QUANTITY)/( (SELECT SUM(PNUM) FROM T_GOODS_DISTRIBUTOR_PRICE WHERE ('{0}'='' or USERCODE ='{0}') ) /DATE_FORMAT(NOW(),'%d')),2) AS RATE " +
                 "FROM T_ORDER_LIST O ,T_ORDER_GOODS G " +
-                "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') AND ('{1}'='' or PURCHASERCODE = '{1}') " +
+                "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') AND ('{1}'='' or PURCHASERCODE = '{1}')  AND APITYPE='{4}' " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') DESC LIMIT 10";
 
         }
