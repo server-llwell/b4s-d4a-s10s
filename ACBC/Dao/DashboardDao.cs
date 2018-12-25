@@ -317,7 +317,7 @@ namespace ACBC.Dao
                         DaySalesData daySalesData = new DaySalesData
                         {
                             day = (list.Count + 1).ToString(),
-                            money = "0",
+                            money = 0,
                             title = tempDay.ToString("yyyy-MM-dd"),
                         };
                         list.Add(daySalesData);
@@ -326,7 +326,7 @@ namespace ACBC.Dao
                     DaySalesData daySalesData1 = new DaySalesData
                     {
                         day = (list.Count+1).ToString(),
-                        money = dt.Rows[i]["MONEY"].ToString(),
+                        money = Convert.ToDouble( dt.Rows[i]["MONEY"].ToString()),
                         title = dt.Rows[i]["DAY"].ToString(),
                     };
                     list.Add(daySalesData1);
@@ -355,7 +355,7 @@ namespace ACBC.Dao
                         DayOrderData dayOrderData = new DayOrderData
                         {
                             day = (list.Count + 1).ToString(),
-                            count = "0",
+                            count = 0,
                             title = tempDay.ToString("yyyy-MM-dd"),
                         };
                         list.Add(dayOrderData);
@@ -364,7 +364,7 @@ namespace ACBC.Dao
                     DayOrderData dayOrderData1 = new DayOrderData
                     {
                         day = (list.Count + 1).ToString(),
-                        count = dt.Rows[i]["ORDERNUM"].ToString(),
+                        count =Convert.ToDouble( dt.Rows[i]["ORDERNUM"].ToString()),
                         title = dt.Rows[i]["DAY"].ToString(),
                     };
                     list.Add(dayOrderData1);
@@ -382,12 +382,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                foreach (DataRow dr in dt.Rows)
+                for (int i = dt.Rows.Count-1; i >=0; i--)
                 {
                     SellerGoodsData sellerGoodsData = new SellerGoodsData
                     {
-                        brand = dr["GOODSNAME"].ToString(),
-                        count = dr["COUNT"].ToString(),
+                        brand = dt.Rows[i]["GOODSNAME"].ToString(),
+                        count = Convert.ToDouble(dt.Rows[i]["COUNT"]),
                     };
                     list.Add(sellerGoodsData);
                 }
@@ -404,12 +404,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                foreach (DataRow dr in dt.Rows)
+                for (int i = dt.Rows.Count - 1; i >= 0; i--)
                 {
                     SellerGoodsData sellerGoodsData = new SellerGoodsData
                     {
-                        brand = dr["GOODSNAME"].ToString(),
-                        count = dr["COUNT"].ToString(),
+                        brand = dt.Rows[i]["GOODSNAME"].ToString(),
+                        count = Convert.ToDouble(dt.Rows[i]["COUNT"]),
                     };
                     list.Add(sellerGoodsData);
                 }
@@ -732,7 +732,7 @@ namespace ACBC.Dao
                         DaySalesData daySalesData = new DaySalesData
                         {
                             day = (list.Count + 1).ToString(),
-                            money = "0",
+                            money = 0,
                             title = tempDay.ToString("yyyy-MM-dd"),
                         };
                         list.Add(daySalesData);
@@ -741,7 +741,7 @@ namespace ACBC.Dao
                     DaySalesData daySalesData1 = new DaySalesData
                     {
                         day = (list.Count + 1).ToString(),
-                        money = dt.Rows[i]["MONEY"].ToString(),
+                        money =Convert.ToDouble( dt.Rows[i]["MONEY"].ToString()),
                         title = dt.Rows[i]["DAY"].ToString(),
                     };
                     list.Add(daySalesData1);
@@ -770,7 +770,7 @@ namespace ACBC.Dao
                         DayOrderData dayOrderData = new DayOrderData
                         {
                             day = (list.Count + 1).ToString(),
-                            count = "0",
+                            count = 0,
                             title = tempDay.ToString("yyyy-MM-dd"),
                         };
                         list.Add(dayOrderData);
@@ -779,7 +779,7 @@ namespace ACBC.Dao
                     DayOrderData dayOrderData1 = new DayOrderData
                     {
                         day = (list.Count + 1).ToString(),
-                        count = dt.Rows[i]["ORDERNUM"].ToString(),
+                        count =Convert.ToDouble( dt.Rows[i]["ORDERNUM"].ToString()),
                         title = dt.Rows[i]["DAY"].ToString(),
                     };
                     list.Add(dayOrderData1);
@@ -797,12 +797,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                foreach (DataRow dr in dt.Rows)
+                for (int i = dt.Rows.Count - 1; i >= 0; i--)
                 {
                     SellerGoodsData sellerGoodsData = new SellerGoodsData
                     {
-                        brand = dr["GOODSNAME"].ToString(),
-                        count = dr["COUNT"].ToString(),
+                        brand = dt.Rows[i]["GOODSNAME"].ToString(),
+                        count = Convert.ToDouble(dt.Rows[i]["COUNT"]),
                     };
                     list.Add(sellerGoodsData);
                 }
@@ -819,12 +819,12 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                foreach (DataRow dr in dt.Rows)
+                for (int i = dt.Rows.Count - 1; i >= 0; i--)
                 {
                     SellerGoodsData sellerGoodsData = new SellerGoodsData
                     {
-                        brand = dr["GOODSNAME"].ToString(),
-                        count = dr["COUNT"].ToString(),
+                        brand = dt.Rows[i]["GOODSNAME"].ToString(),
+                        count = Convert.ToDouble(dt.Rows[i]["COUNT"]),
                     };
                     list.Add(sellerGoodsData);
                 }

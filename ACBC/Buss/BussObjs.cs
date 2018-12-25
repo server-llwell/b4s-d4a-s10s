@@ -230,7 +230,7 @@ namespace ACBC.Buss
 
     public class DaySalesData
     {
-        public string money;
+        public double money;
         public string day;
         public string title;
     }
@@ -242,7 +242,7 @@ namespace ACBC.Buss
 
     public class DayOrderData
     {
-        public string count;
+        public double count;
         public string day;
         public string title;
     }
@@ -255,7 +255,7 @@ namespace ACBC.Buss
     public class SellerGoodsData
     {
         public string brand;
-        public string count;
+        public double count;
     }
 
     public class LowSellerGoodsData
