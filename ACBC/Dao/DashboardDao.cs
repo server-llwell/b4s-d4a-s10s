@@ -55,7 +55,15 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
-                return dt.Rows[0]["DAILY_AVERAGE"].ToString();
+                if (dt.Rows[0]["DAILY_AVERAGE"].ToString() == "")
+                {
+                    return "0";
+                }
+                else
+                {
+                    return dt.Rows[0]["DAILY_AVERAGE"].ToString();
+                }
+                
             }
             else
             {
@@ -167,7 +175,7 @@ namespace ACBC.Dao
             builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId, "1");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null)
+            if (dt != null&& dt.Rows.Count>0)
             {
                 //查询订单数
                 StringBuilder builder1 = new StringBuilder();
@@ -646,7 +654,14 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
-                return dt.Rows[0]["DAILY_AVERAGE"].ToString();
+                if (dt.Rows[0]["DAILY_AVERAGE"].ToString() == "")
+                {
+                    return "0";
+                }
+                else
+                {
+                    return dt.Rows[0]["DAILY_AVERAGE"].ToString();
+                }
             }
             else
             {
@@ -750,7 +765,7 @@ namespace ACBC.Dao
             builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_SHOPID_MONTH, shopId, "2");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null)
+            if (dt != null && dt.Rows.Count > 0)
             {
                 //查询订单数
                 StringBuilder builder1 = new StringBuilder();
