@@ -252,7 +252,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
             List<ProportionLegend> proportionLegendList = new List<ProportionLegend>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count >0)
@@ -312,7 +312,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
             List<ProportionValues> proportionValuesList = new List<ProportionValues>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY, yesterday, today, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_ONLINESHOP);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -798,7 +798,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
             List<ProportionLegend> proportionLegendList = new List<ProportionLegend>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -857,7 +857,7 @@ namespace ACBC.Dao
             string yesterday = dtime.AddDays(-1).ToString("yyyy-MM-dd");
             List<ProportionValues> proportionValuesList = new List<ProportionValues>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY, yesterday, today);
+            builder.AppendFormat(DashboardSqls.SELECT_AMOUNT_BY_OFFLINESHOP);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -1217,22 +1217,19 @@ namespace ACBC.Dao
             public const string SELECT_ORDERNUM_BY_SHOPID_MONTH = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m') as MONTH,COUNT(*)as ORDER_NUM " +
                 "FROM T_ORDER_LIST O " +
                 "WHERE  ('{0}'='' or O.PURCHASERCODE = '{0}') AND APITYPE='{1}'  GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m') ";
-            public const string SELECT_AMOUNT_BY_ONLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
+            public const string SELECT_AMOUNT_BY_ONLINESHOP = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G ,T_USER_LIST U  " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE('{0}', '%Y-%m-%d') AND STR_TO_DATE('{1}', '%Y-%m-%d') " +
                       "AND APITYPE = 1 AND U.USERTYPE= '2' " +
                 "GROUP BY PURCHASERCODE " +
                 "UNION  " +
                 "SELECT 'BBC' AS USERNAME, SUM(G.SKUUNITPRICE* G.QUANTITY) as AMOUNT " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G, T_USER_LIST U " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') " +
                       "AND APITYPE = 1 AND U.USERTYPE= '3'";
-            public const string SELECT_AMOUNT_BY_OFFLINESHOP_YESTERDAY = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
+            public const string SELECT_AMOUNT_BY_OFFLINESHOP = "SELECT USERNAME,SUM(G.SKUUNITPRICE*G.QUANTITY) " +
                 "FROM T_ORDER_LIST O,T_ORDER_GOODS G ,T_USER_LIST U  " +
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
-                      "AND TRADETIME BETWEEN STR_TO_DATE('{0}', '%Y-%m-%d') AND STR_TO_DATE('{1}', '%Y-%m-%d') " +
                       "AND APITYPE = 2 AND U.USERTYPE= '2' " +
                 "GROUP BY PURCHASERCODE ";
             public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
