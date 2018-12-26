@@ -57,8 +57,10 @@ namespace ACBC.Dao
             {
                 return dt.Rows[0]["DAILY_AVERAGE"].ToString();
             }
-
-            return null;
+            else
+            {
+                return "0";
+            }
         }
         /// <summary>
         /// 昨日零售统计
@@ -139,6 +141,17 @@ namespace ACBC.Dao
                     upOrDown = upOrDown,                  //上升还是下降
                 };
             }
+            else
+            {
+                partSalesDay = new PartSalesDay
+                {
+                    actualAmount = "0",           //日销售额
+                    orderNum = "0",                   //订单数
+                    rate = "0",                            //同比
+                    supplyAmount = "0",           //应收账款
+                    upOrDown = "0",                  //上升还是下降
+                };
+            }
 
             return partSalesDay;
         }
@@ -216,6 +229,19 @@ namespace ACBC.Dao
                     }
                 }
             }
+            else
+            {
+                PartSalesMonth partSalesMonth = new PartSalesMonth
+                {
+                    actualAmount = "0",
+                    month = "0",
+                    monthDisplay = "0",
+                    orderNum = "0",
+                    rate = "0",
+                    supplyAmount = "0",
+                    upOrDown = "0",
+                };
+            }
             return monthGroups;
         }
 
@@ -265,6 +291,15 @@ namespace ACBC.Dao
 
 
             }
+            else
+            {
+                ProportionLegend proportionLegend = new ProportionLegend
+                {
+                    percentDisplay = "100%",
+                    shopName = "无销售",
+                };
+                proportionLegendList.Add(proportionLegend);
+            }
 
             return proportionLegendList;
         }
@@ -313,7 +348,17 @@ namespace ACBC.Dao
                     };
                     proportionValuesList.Add(proportionValues);
                 }
-                
+
+            }
+            else
+            {
+                ProportionValues proportionValues = new ProportionValues
+                {
+                    constValue = "1",
+                    shopName = "无销售",
+                    percent = 1,
+                };
+                proportionValuesList.Add(proportionValues);
             }
 
             return proportionValuesList;
@@ -354,6 +399,21 @@ namespace ACBC.Dao
                     list.Add(daySalesData1);
                 }
             }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    DaySalesData daySalesData = new DaySalesData
+                    {
+                        day = (i+1).ToString(),
+                        money = 0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(daySalesData);
+                    tempDay = tempDay.AddDays(1);
+                }
+            }
             return list;
         }
 
@@ -392,6 +452,21 @@ namespace ACBC.Dao
                     list.Add(dayOrderData1);
                 }
             }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    DayOrderData dayOrderData = new DayOrderData
+                    {
+                        day = (i + 1).ToString(),
+                        count = 0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(dayOrderData);
+                    tempDay = tempDay.AddDays(1);
+                }
+            }
             return list;
         }
 
@@ -413,6 +488,15 @@ namespace ACBC.Dao
                     };
                     list.Add(sellerGoodsData);
                 }
+            }
+            else
+            {
+                SellerGoodsData sellerGoodsData = new SellerGoodsData
+                {
+                    brand = "暂无数据",
+                    count = 0,
+                };
+                list.Add(sellerGoodsData);
             }
             return list;
         }
@@ -436,11 +520,21 @@ namespace ACBC.Dao
                     list.Add(sellerGoodsData);
                 }
             }
+            else
+            {
+                SellerGoodsData sellerGoodsData = new SellerGoodsData
+                {
+                    brand = "暂无数据",
+                    count = 0,
+                };
+                list.Add(sellerGoodsData);
+            }
             return list;
         }
 
         public List<AccountsReceivableTMonthData> OnlineGetAccountsReceivableTRateList(string shopId)
         {
+            DateTime dtime = DateTime.Now;
             List<AccountsReceivableTMonthData> list = new List<AccountsReceivableTMonthData>();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID, shopId);
@@ -456,6 +550,20 @@ namespace ACBC.Dao
                         title = dr["ACCOUNTMONTH"].ToString(),
                     };
                     list.Add(accountsReceivableTMonthData);
+                }
+            }
+            else
+            {
+                DateTime tempDay = dtime.AddMonths(-5);
+                for (int i = 0; i < 5; i++)
+                {
+                    AccountsReceivableTMonthData accountsReceivableTMonthData = new AccountsReceivableTMonthData
+                    {
+                        rate = 0,
+                        title = tempDay.ToString("yyyy-MM"),
+                    };
+                    list.Add(accountsReceivableTMonthData);
+                    tempDay = tempDay.AddMonths(1);
                 }
             }
             return list;
@@ -502,8 +610,10 @@ namespace ACBC.Dao
             {
                 return dt.Rows[0]["DAILY_AVERAGE"].ToString();
             }
-
-            return null;
+            else
+            {
+                return "0";
+            }
         }
 
         public PartSalesDay OfflineGetPartSalesDay(string shopId)
@@ -580,6 +690,17 @@ namespace ACBC.Dao
                     upOrDown = upOrDown,                  //上升还是下降
                 };
             }
+            else
+            {
+                partSalesDay = new PartSalesDay
+                {
+                    actualAmount = "0",           //日销售额
+                    orderNum = "0",                   //订单数
+                    rate = "0",                            //同比
+                    supplyAmount = "0",           //应收账款
+                    upOrDown = "0",                  //上升还是下降
+                };
+            }
 
             return partSalesDay;
         }
@@ -653,6 +774,19 @@ namespace ACBC.Dao
                     }
                 }
             }
+            else
+            {
+                PartSalesMonth partSalesMonth = new PartSalesMonth
+                {
+                    actualAmount = "0",
+                    month = "0",
+                    monthDisplay = "0",
+                    orderNum = "0",
+                    rate = "0",
+                    supplyAmount = "0",
+                    upOrDown = "0",
+                };
+            }
             return monthGroups;
         }
 
@@ -701,6 +835,15 @@ namespace ACBC.Dao
                 }
 
 
+            }
+            else
+            {
+                ProportionLegend proportionLegend = new ProportionLegend
+                {
+                    percentDisplay = "100%",
+                    shopName = "无销售",
+                };
+                proportionLegendList.Add(proportionLegend);
             }
 
             return proportionLegendList;
@@ -752,6 +895,16 @@ namespace ACBC.Dao
                 }
 
             }
+            else
+            {
+                ProportionValues proportionValues = new ProportionValues
+                {
+                    constValue = "1",
+                    shopName = "无销售",
+                    percent = 1,
+                };
+                proportionValuesList.Add(proportionValues);
+            }
 
             return proportionValuesList;
         }
@@ -789,6 +942,21 @@ namespace ACBC.Dao
                         title = dt.Rows[i]["DAY"].ToString(),
                     };
                     list.Add(daySalesData1);
+                }
+            }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    DaySalesData daySalesData = new DaySalesData
+                    {
+                        day = (i + 1).ToString(),
+                        money = 0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(daySalesData);
+                    tempDay = tempDay.AddDays(1);
                 }
             }
             return list;
@@ -829,6 +997,21 @@ namespace ACBC.Dao
                     list.Add(dayOrderData1);
                 }
             }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    DayOrderData dayOrderData = new DayOrderData
+                    {
+                        day = (i + 1).ToString(),
+                        count = 0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(dayOrderData);
+                    tempDay = tempDay.AddDays(1);
+                }
+            }
             return list;
         }
 
@@ -850,6 +1033,15 @@ namespace ACBC.Dao
                     };
                     list.Add(sellerGoodsData);
                 }
+            }
+            else
+            {
+                SellerGoodsData sellerGoodsData = new SellerGoodsData
+                {
+                    brand = "暂无数据",
+                    count = 0,
+                };
+                list.Add(sellerGoodsData);
             }
             return list;
         }
@@ -873,11 +1065,21 @@ namespace ACBC.Dao
                     list.Add(sellerGoodsData);
                 }
             }
+            else
+            {
+                SellerGoodsData sellerGoodsData = new SellerGoodsData
+                {
+                    brand = "暂无数据",
+                    count = 0,
+                };
+                list.Add(sellerGoodsData);
+            }
             return list;
         }
 
         public List<AccountsReceivableTMonthData> OfflineGetAccountsReceivableTRateList(string shopId)
         {
+            DateTime dtime = DateTime.Now;
             List<AccountsReceivableTMonthData> list = new List<AccountsReceivableTMonthData>();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_ACCOUNTS_RECEIVABLE_TRATE_BY_SHOPID, shopId);
@@ -895,11 +1097,26 @@ namespace ACBC.Dao
                     list.Add(accountsReceivableTMonthData);
                 }
             }
+            else
+            {
+                DateTime tempDay = dtime.AddMonths(-5);
+                for (int i = 0; i < 5; i++)
+                {
+                    AccountsReceivableTMonthData accountsReceivableTMonthData = new AccountsReceivableTMonthData
+                    {
+                        rate = 0,
+                        title = tempDay.ToString("yyyy-MM"),
+                    };
+                    list.Add(accountsReceivableTMonthData);
+                    tempDay = tempDay.AddMonths(1);
+                }
+            }
             return list;
         }
 
         public List<MarketingDayData> OfflineGetMarketingDayList(string shopId)
         {
+            DateTime dtime = DateTime.Now;
             List<MarketingDayData> list = new List<MarketingDayData>();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_MARKETING_RATE_BY_SHOPID_DAY, shopId,shopId, "2");
@@ -915,6 +1132,20 @@ namespace ACBC.Dao
                         title = dr["DATE1"].ToString(),
                     };
                     list.Add(marketingDayData);
+                }
+            }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    MarketingDayData marketingDayData = new MarketingDayData
+                    {
+                        rate =0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(marketingDayData);
+                    tempDay = tempDay.AddDays(1);
                 }
             }
             return list;
@@ -940,6 +1171,20 @@ namespace ACBC.Dao
                         title = dr["TITLE"].ToString(),
                     };
                     list.Add(stockTMonthData);
+                }
+            }
+            else
+            {
+                DateTime tempDay = dtime.AddDays(-7);
+                for (int i = 0; i < 7; i++)
+                {
+                    StockTMonthData stockTMonthData = new StockTMonthData
+                    {
+                        rate = 0,
+                        title = tempDay.ToString("yyyy-MM-dd"),
+                    };
+                    list.Add(stockTMonthData);
+                    tempDay = tempDay.AddDays(1);
                 }
             }
             return list;
