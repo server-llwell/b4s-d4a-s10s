@@ -262,7 +262,7 @@ namespace ACBC.Dao
                 {
                     try
                     {
-                        total += Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString());
+                        total += Convert.ToDouble(dt.Rows[i][1].ToString());
                     }
                     catch (Exception)
                     {
@@ -275,12 +275,13 @@ namespace ACBC.Dao
                     double percent = 0;
                     try
                     {
-                        percent = Math.Round(Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString()) / total * 100, 2);
+                        percent = Math.Round(Convert.ToDouble(dt.Rows[i][1].ToString()) / total * 100, 2);
                     }
                     catch (Exception)
                     {
 
                     }
+                    
                     ProportionLegend proportionLegend = new ProportionLegend
                     {
                         percentDisplay = percent.ToString()+"%",
@@ -321,7 +322,7 @@ namespace ACBC.Dao
                 {
                     try
                     {
-                        total += Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString());
+                        total += Convert.ToDouble(dt.Rows[i][1].ToString());
                     }
                     catch (Exception)
                     {
@@ -334,7 +335,7 @@ namespace ACBC.Dao
                     double percent = 0;
                     try
                     {
-                        percent = Math.Round(Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString()) / total, 4);
+                        percent = Math.Round(Convert.ToDouble(dt.Rows[i][1].ToString()) / total, 4);
                     }
                     catch (Exception)
                     {
@@ -807,7 +808,7 @@ namespace ACBC.Dao
                 {
                     try
                     {
-                        total += Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString());
+                        total += Convert.ToDouble(dt.Rows[i][1].ToString());
                     }
                     catch (Exception)
                     {
@@ -820,7 +821,7 @@ namespace ACBC.Dao
                     double percent = 0;
                     try
                     {
-                        percent = Math.Round(Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString()) / total * 100, 2);
+                        percent = Math.Round(Convert.ToDouble(dt.Rows[i][1].ToString()) / total * 100, 2);
                     }
                     catch (Exception)
                     {
@@ -866,7 +867,7 @@ namespace ACBC.Dao
                 {
                     try
                     {
-                        total += Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString());
+                        total += Convert.ToDouble(dt.Rows[i][1].ToString());
                     }
                     catch (Exception)
                     {
@@ -879,7 +880,7 @@ namespace ACBC.Dao
                     double percent = 0;
                     try
                     {
-                        percent = Math.Round(Convert.ToDouble(dt.Rows[i]["AMOUNT"].ToString()) / total, 4);
+                        percent = Math.Round(Convert.ToDouble(dt.Rows[i][1].ToString()) / total, 4);
                     }
                     catch (Exception)
                     {

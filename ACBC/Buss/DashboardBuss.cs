@@ -19,7 +19,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            OnlineData onlineData = Utils.GetCache<OnlineData>(getOnlineShopDataParam);
+            //OnlineData onlineData = Utils.GetCache<OnlineData>(getOnlineShopDataParam);
 
             //if (onlineData == null)
             //{
@@ -65,7 +65,7 @@ namespace ACBC.Buss
                     list = dashboardDao.OnlineGetAccountsReceivableTRateList(shopId)
                 };
 
-                onlineData = new OnlineData
+                OnlineData onlineData = new OnlineData
                 {
                     accountsReceivableTRateData = accountsReceivableTRateData,
                     bestSellerGoodsData = bestSellerGoodsData,
@@ -91,7 +91,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
+            //OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
 
             //if (offlineData == null)
             //{
@@ -147,7 +147,7 @@ namespace ACBC.Buss
                 {
                     list = dashboardDao.OfflineGetStockTMonthList(shopId)
                 };
-                offlineData = new OfflineData();
+                OfflineData offlineData = new OfflineData();
                 offlineData.accountsReceivableTRateData = accountsReceivableTRateData;
                 offlineData.bestSellerGoodsData = bestSellerGoodsData;
                 offlineData.lowSellerGoodsData = lowSellerGoodsData;
