@@ -377,27 +377,34 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int j = 0; j < 7; j++)
                 {
-                    DateTime tempDay = dtime.AddDays(list.Count - 7);
-                    while (tempDay.ToString("yyyy-MM-dd") != dt.Rows[i]["DAY"].ToString())
+                    DateTime tempDay = dtime.AddDays(-7 + j);
+                    DaySalesData daySalesData = null;
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DaySalesData daySalesData = new DaySalesData
+                        if(tempDay.ToString("MM-dd") == dt.Rows[i]["DAY"].ToString())
+                        {
+                            daySalesData = new DaySalesData
+                            {
+                                day = (list.Count + 1).ToString(),
+                                money = Convert.ToDouble(dt.Rows[i]["MONEY"].ToString()),
+                                title = dt.Rows[i]["DAY"].ToString(),
+                            };
+                            list.Add(daySalesData);
+                            break;
+                        }
+                    }
+                    if (daySalesData==null)
+                    {
+                        daySalesData = new DaySalesData
                         {
                             day = (list.Count + 1).ToString(),
                             money = 0,
-                            title = tempDay.ToString("yyyy-MM-dd"),
+                            title = tempDay.ToString("MM-dd"),
                         };
                         list.Add(daySalesData);
-                        tempDay = tempDay.AddDays(1);
                     }
-                    DaySalesData daySalesData1 = new DaySalesData
-                    {
-                        day = (list.Count+1).ToString(),
-                        money = Convert.ToDouble( dt.Rows[i]["MONEY"].ToString()),
-                        title = dt.Rows[i]["DAY"].ToString(),
-                    };
-                    list.Add(daySalesData1);
                 }
             }
             else
@@ -409,7 +416,7 @@ namespace ACBC.Dao
                     {
                         day = (i+1).ToString(),
                         money = 0,
-                        title = tempDay.ToString("yyyy-MM-dd"),
+                        title = tempDay.ToString("MM-dd"),
                     };
                     list.Add(daySalesData);
                     tempDay = tempDay.AddDays(1);
@@ -430,28 +437,58 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int j = 0; j < 7; j++)
                 {
-                    DateTime tempDay = dtime.AddDays(list.Count - 7);
-                    while (tempDay.ToString("yyyy-MM-dd") != dt.Rows[i]["DAY"].ToString())
+                    DateTime tempDay = dtime.AddDays(-7 + j);
+                    DayOrderData dayOrderData = null;
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DayOrderData dayOrderData = new DayOrderData
+                        if (tempDay.ToString("MM-dd") == dt.Rows[i]["DAY"].ToString())
+                        {
+                            dayOrderData = new DayOrderData
+                            {
+                                day = (list.Count + 1).ToString(),
+                                count = Convert.ToDouble(dt.Rows[i]["ORDERNUM"].ToString()),
+                                title = dt.Rows[i]["DAY"].ToString(),
+                            };
+                            list.Add(dayOrderData);
+                            break;
+                        }
+                    }
+                    if (dayOrderData == null)
+                    {
+                        dayOrderData = new DayOrderData
                         {
                             day = (list.Count + 1).ToString(),
                             count = 0,
-                            title = tempDay.ToString("yyyy-MM-dd"),
+                            title = tempDay.ToString("MM-dd"),
                         };
                         list.Add(dayOrderData);
-                        tempDay = tempDay.AddDays(1);
                     }
-                    DayOrderData dayOrderData1 = new DayOrderData
-                    {
-                        day = (list.Count + 1).ToString(),
-                        count =Convert.ToDouble( dt.Rows[i]["ORDERNUM"].ToString()),
-                        title = dt.Rows[i]["DAY"].ToString(),
-                    };
-                    list.Add(dayOrderData1);
                 }
+
+                //for (int i = 0; i < dt.Rows.Count; i++)
+                //{
+                //    DateTime tempDay = dtime.AddDays(list.Count - 7);
+                //    while (tempDay.ToString("MM-dd") != dt.Rows[i]["DAY"].ToString())
+                //    {
+                //        DayOrderData dayOrderData = new DayOrderData
+                //        {
+                //            day = (list.Count + 1).ToString(),
+                //            count = 0,
+                //            title = tempDay.ToString("MM-dd"),
+                //        };
+                //        list.Add(dayOrderData);
+                //        tempDay = tempDay.AddDays(1);
+                //    }
+                //    DayOrderData dayOrderData1 = new DayOrderData
+                //    {
+                //        day = (list.Count + 1).ToString(),
+                //        count =Convert.ToDouble( dt.Rows[i]["ORDERNUM"].ToString()),
+                //        title = dt.Rows[i]["DAY"].ToString(),
+                //    };
+                //    list.Add(dayOrderData1);
+                //}
             }
             else
             {
@@ -462,7 +499,7 @@ namespace ACBC.Dao
                     {
                         day = (i + 1).ToString(),
                         count = 0,
-                        title = tempDay.ToString("yyyy-MM-dd"),
+                        title = tempDay.ToString("MM-dd"),
                     };
                     list.Add(dayOrderData);
                     tempDay = tempDay.AddDays(1);
@@ -922,27 +959,34 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int j = 0; j < 7; j++)
                 {
-                    DateTime tempDay = dtime.AddDays(list.Count - 7);
-                    while (tempDay.ToString("yyyy-MM-dd") != dt.Rows[i]["DAY"].ToString())
+                    DateTime tempDay = dtime.AddDays(-7 + j);
+                    DaySalesData daySalesData = null;
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DaySalesData daySalesData = new DaySalesData
+                        if (tempDay.ToString("MM-dd") == dt.Rows[i]["DAY"].ToString())
+                        {
+                            daySalesData = new DaySalesData
+                            {
+                                day = (list.Count + 1).ToString(),
+                                money = Convert.ToDouble(dt.Rows[i]["MONEY"].ToString()),
+                                title = dt.Rows[i]["DAY"].ToString(),
+                            };
+                            list.Add(daySalesData);
+                            break;
+                        }
+                    }
+                    if (daySalesData == null)
+                    {
+                        daySalesData = new DaySalesData
                         {
                             day = (list.Count + 1).ToString(),
                             money = 0,
-                            title = tempDay.ToString("yyyy-MM-dd"),
+                            title = tempDay.ToString("MM-dd"),
                         };
                         list.Add(daySalesData);
-                        tempDay = tempDay.AddDays(1);
                     }
-                    DaySalesData daySalesData1 = new DaySalesData
-                    {
-                        day = (list.Count + 1).ToString(),
-                        money =Convert.ToDouble( dt.Rows[i]["MONEY"].ToString()),
-                        title = dt.Rows[i]["DAY"].ToString(),
-                    };
-                    list.Add(daySalesData1);
                 }
             }
             else
@@ -954,7 +998,7 @@ namespace ACBC.Dao
                     {
                         day = (i + 1).ToString(),
                         money = 0,
-                        title = tempDay.ToString("yyyy-MM-dd"),
+                        title = tempDay.ToString("MM-dd"),
                     };
                     list.Add(daySalesData);
                     tempDay = tempDay.AddDays(1);
@@ -975,27 +1019,34 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int j = 0; j < 7; j++)
                 {
-                    DateTime tempDay = dtime.AddDays(list.Count - 7);
-                    while (tempDay.ToString("yyyy-MM-dd") != dt.Rows[i]["DAY"].ToString())
+                    DateTime tempDay = dtime.AddDays(-7 + j);
+                    DayOrderData dayOrderData = null;
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DayOrderData dayOrderData = new DayOrderData
+                        if (tempDay.ToString("MM-dd") == dt.Rows[i]["DAY"].ToString())
+                        {
+                            dayOrderData = new DayOrderData
+                            {
+                                day = (list.Count + 1).ToString(),
+                                count = Convert.ToDouble(dt.Rows[i]["ORDERNUM"].ToString()),
+                                title = dt.Rows[i]["DAY"].ToString(),
+                            };
+                            list.Add(dayOrderData);
+                            break;
+                        }
+                    }
+                    if (dayOrderData == null)
+                    {
+                        dayOrderData = new DayOrderData
                         {
                             day = (list.Count + 1).ToString(),
                             count = 0,
-                            title = tempDay.ToString("yyyy-MM-dd"),
+                            title = tempDay.ToString("MM-dd"),
                         };
                         list.Add(dayOrderData);
-                        tempDay = tempDay.AddDays(1);
                     }
-                    DayOrderData dayOrderData1 = new DayOrderData
-                    {
-                        day = (list.Count + 1).ToString(),
-                        count =Convert.ToDouble( dt.Rows[i]["ORDERNUM"].ToString()),
-                        title = dt.Rows[i]["DAY"].ToString(),
-                    };
-                    list.Add(dayOrderData1);
                 }
             }
             else
@@ -1007,7 +1058,7 @@ namespace ACBC.Dao
                     {
                         day = (i + 1).ToString(),
                         count = 0,
-                        title = tempDay.ToString("yyyy-MM-dd"),
+                        title = tempDay.ToString("MM-dd"),
                     };
                     list.Add(dayOrderData);
                     tempDay = tempDay.AddDays(1);
@@ -1232,7 +1283,7 @@ namespace ACBC.Dao
                 "WHERE O.MERCHANTORDERID = G.MERCHANTORDERID AND O.PURCHASERCODE = U.USERCODE " +
                       "AND APITYPE = 2 AND U.USERTYPE= '2' " +
                 "GROUP BY PURCHASERCODE ";
-            public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%Y-%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
+            public const string SELECT_SEVENAMOUNT_BY_SHOPID = "SELECT DATE_FORMAT(TRADETIME,'%m-%d') as DAY,COUNT(*) AS ORDERNUM, SUM(O.TRADEAMOUNT) AS MONEY " +
                 "FROM T_ORDER_LIST O " +
                 "WHERE ('{0}'='' or PURCHASERCODE = '{0}') AND APITYPE='{3}'  AND TRADETIME BETWEEN STR_TO_DATE('{1}', '%Y-%m-%d') AND STR_TO_DATE('{2}', '%Y-%m-%d') " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') " +
