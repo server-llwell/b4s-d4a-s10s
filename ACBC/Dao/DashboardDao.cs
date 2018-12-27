@@ -249,6 +249,7 @@ namespace ACBC.Dao
                     supplyAmount = "0",
                     upOrDown = "0",
                 };
+                monthGroups.list.Add(partSalesMonth);
             }
             return monthGroups;
         }
@@ -839,6 +840,7 @@ namespace ACBC.Dao
                     supplyAmount = "0",
                     upOrDown = "0",
                 };
+                monthGroups.list.Add(partSalesMonth);
             }
             return monthGroups;
         }
