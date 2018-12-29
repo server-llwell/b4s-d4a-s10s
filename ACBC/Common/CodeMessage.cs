@@ -32,5 +32,9 @@ namespace ACBC.Common
         InterfaceValueError = 4004,//接口的参数不对
         InterfaceDBError=4005,//接口数据库操作失败
         NeedLogin = 4006,
+
+        InvalidUserCode = 10000,
+        UserRegError = 10001,
+        UserExist = 10002,
     }
 }

@@ -52,6 +52,7 @@ namespace ACBC.Buss
         public string checkPhone;
         public string checkCode;
         public string userType;
+        public string userId;
     }
 
     public class SmsCodeRes
@@ -96,8 +97,6 @@ namespace ACBC.Buss
 
     public class UserRegParam
     {
-        public string checkCode;
-        public string agentCode;
         public string avatarUrl;
         public string city;
         public string country;
@@ -105,8 +104,7 @@ namespace ACBC.Buss
         public string language;
         public string nickName;
         public string province;
-        public string phone;
-        public string userType;
+        public string userCode;
     }
 
     public class GetOnlineShopDataParam : BussParam
