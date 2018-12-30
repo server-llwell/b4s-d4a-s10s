@@ -19,10 +19,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            //OnlineData onlineData = Utils.GetCache<OnlineData>(getOnlineShopDataParam);
+            OnlineData onlineData = Utils.GetCache<OnlineData>(getOnlineShopDataParam);
 
-            //if (onlineData == null)
-            //{
+            if (onlineData == null)
+            {
                 string shopId = getOnlineShopDataParam.shopId;
                 DashboardDao dashboardDao = new DashboardDao();
                 Shops shops = dashboardDao.OnlineGetShops();
@@ -65,7 +65,7 @@ namespace ACBC.Buss
                     list = dashboardDao.OnlineGetAccountsReceivableTRateList(shopId)
                 };
 
-                OnlineData onlineData = new OnlineData
+                onlineData = new OnlineData
                 {
                     accountsReceivableTRateData = accountsReceivableTRateData,
                     bestSellerGoodsData = bestSellerGoodsData,
@@ -77,8 +77,8 @@ namespace ACBC.Buss
                     shops = shops
                 };
                 onlineData.Unique = getOnlineShopDataParam.GetUnique();
-                //Utils.SetCache(onlineData, 1, 0, 0);
-            //}
+                Utils.SetCache(onlineData, 0, 1, 0);
+            }
 
             return onlineData;
         }
@@ -91,10 +91,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            //OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
+            OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
 
-            //if (offlineData == null)
-            //{
+            if (offlineData == null)
+            {
                 DashboardDao dashboardDao = new DashboardDao();
                 Shops shops = dashboardDao.OfflineGetShops();
 
@@ -147,7 +147,7 @@ namespace ACBC.Buss
                 {
                     list = dashboardDao.OfflineGetStockTMonthList(shopId)
                 };
-                OfflineData offlineData = new OfflineData();
+                offlineData = new OfflineData();
                 offlineData.accountsReceivableTRateData = accountsReceivableTRateData;
                 offlineData.bestSellerGoodsData = bestSellerGoodsData;
                 offlineData.lowSellerGoodsData = lowSellerGoodsData;
@@ -159,8 +159,8 @@ namespace ACBC.Buss
                 offlineData.marketingRateData = marketingRateData;
                 offlineData.stockTRateData = stockTRateData;
                 offlineData.Unique = getOfflineShopDataParam.GetUnique();
-                //Utils.SetCache(offlineData, 1, 0, 0);
-            //}
+                Utils.SetCache(offlineData, 0, 1, 0);
+            }
 
             return offlineData;
         }

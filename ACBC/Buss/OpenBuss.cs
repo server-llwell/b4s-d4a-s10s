@@ -32,18 +32,6 @@ namespace ACBC.Buss
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
 
-                //    SessionUser sessionUser = new SessionUser();
-                //    sessionUser.userType = "";
-                //    //sessionUser.openid = sessionBag.OpenId;
-                //    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                //    SessionContainer.Update(sessionBag.Key, sessionBag);
-                //    return new { token = sessionBag.Key, isReg = true };
-                //}
-                //else
-                //{
-                //    throw new ApiException(CodeMessage.SenparcCode, jsonResult.errmsg);
-                //}
-
                 OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
 
@@ -103,15 +91,20 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.UserExist, "UserExist");
             }
 
-            //if (!openDao.UserReg(userRegParam, openID))
-            //{
-            //    throw new ApiException(CodeMessage.UserRegError, "UserRegError");
-            //}
+            if (!openDao.GetUserCode(userRegParam.userCode))
+            {
+                throw new ApiException(CodeMessage.InvalidUserCode, "InvalidUserCode");
+            }
+
+            if (!openDao.UserReg(userRegParam, openID))
+            {
+                throw new ApiException(CodeMessage.UserRegError, "UserRegError");
+            }
             user = openDao.GetUser(openID);
             SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
             sessionUser.openid = sessionBag.OpenId;
             sessionUser.userId = user.userId;
-            sessionUser.userType = "STORE";
+            sessionUser.userType = "USER";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
 
