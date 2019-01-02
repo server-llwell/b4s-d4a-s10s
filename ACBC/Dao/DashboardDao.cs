@@ -93,7 +93,7 @@ namespace ACBC.Dao
                 string orderNum = "0";
                 string rate = "0";
                 string supplyAmount = dt.Rows[0]["SUPPLY_AMOUNT"].ToString();
-                string upOrDown = "0";
+                string upOrDown = "1";
                 //处理比率
                 StringBuilder builder1 = new StringBuilder();
                 builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday, "1");
@@ -106,7 +106,7 @@ namespace ACBC.Dao
                     {
                         if (Convert.ToDouble(rate) < 0)
                         {
-                            upOrDown = "1";
+                            upOrDown = "0";
                             rate = (0 - Convert.ToDouble(rate)).ToString();
                         }
                     }
@@ -157,7 +157,7 @@ namespace ACBC.Dao
                     orderNum = "0",                   //订单数
                     rate = "0",                            //同比
                     supplyAmount = "0",           //应收账款
-                    upOrDown = "0",                  //上升还是下降
+                    upOrDown = "1",                  //上升还是下降
                 };
             }
 
@@ -185,6 +185,20 @@ namespace ACBC.Dao
 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
+                    if (i==0&& dt.Rows[i]["MONTH"].ToString() != DateTime.Now.ToString("yyyy-MM"))
+                    {
+                        PartSalesMonth partSalesMonth1 = new PartSalesMonth
+                        {
+                            actualAmount ="0",
+                            month = DateTime.Now.ToString("yyyy-MM"),
+                            monthDisplay = DateTime.Now.ToString("yyyy-MM-01")+"~"+ DateTime.Now.ToString("yyyy-MM-dd"),
+                            orderNum = "0",
+                            rate = "0",
+                            supplyAmount = "0",
+                            upOrDown = "1",
+                        };
+                        monthGroups.list.Add(partSalesMonth1);
+                    }
                     PartSalesMonth partSalesMonth = new PartSalesMonth
                     {
                         actualAmount = dt.Rows[i]["ACTUAL_AMOUNT"].ToString(),
@@ -193,7 +207,7 @@ namespace ACBC.Dao
                         orderNum = "",
                         rate = "0",
                         supplyAmount = dt.Rows[i]["SUPPLY_AMOUNT"].ToString(),
-                        upOrDown = "0",
+                        upOrDown = "1",
                     };
                     //处理月份起末
                     DateTime dtime = Convert.ToDateTime(dt.Rows[i]["MONTH"].ToString() + "-01");
@@ -226,7 +240,7 @@ namespace ACBC.Dao
                         if (d<0)
                         {
                             d = 0 - d;
-                            partSalesMonth.upOrDown = "1";
+                            partSalesMonth.upOrDown = "0";
                         }
                         partSalesMonth.rate = d.ToString();
                     }
@@ -247,7 +261,7 @@ namespace ACBC.Dao
                     orderNum = "0",
                     rate = "0",
                     supplyAmount = "0",
-                    upOrDown = "0",
+                    upOrDown = "1",
                 };
                 monthGroups.list.Add(partSalesMonth);
             }
@@ -688,7 +702,7 @@ namespace ACBC.Dao
                 string orderNum = "0";
                 string rate = "0";
                 string supplyAmount = dt.Rows[0]["SUPPLY_AMOUNT"].ToString();
-                string upOrDown = "0";
+                string upOrDown = "1";
                 //处理比率
                 StringBuilder builder1 = new StringBuilder();
                 builder1.AppendFormat(DashboardSqls.SELECT_RATE_BY_SHOPID_DATE, shopId, yesterday, today, lastWeekYesterday, lastWeekToday, "2");
@@ -701,7 +715,7 @@ namespace ACBC.Dao
                     {
                         if (Convert.ToDouble(rate) < 0)
                         {
-                            upOrDown = "1";
+                            upOrDown = "0";
                             rate = (0 - Convert.ToDouble(rate)).ToString();
                         }
                     }
@@ -752,7 +766,7 @@ namespace ACBC.Dao
                     orderNum = "0",                   //订单数
                     rate = "0",                            //同比
                     supplyAmount = "0",           //应收账款
-                    upOrDown = "0",                  //上升还是下降
+                    upOrDown = "1",                  //上升还是下降
                 };
             }
 
@@ -776,6 +790,20 @@ namespace ACBC.Dao
 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
+                    if (i == 0 && dt.Rows[i]["MONTH"].ToString() != DateTime.Now.ToString("yyyy-MM"))
+                    {
+                        PartSalesMonth partSalesMonth1 = new PartSalesMonth
+                        {
+                            actualAmount = "0",
+                            month = DateTime.Now.ToString("yyyy-MM"),
+                            monthDisplay = DateTime.Now.ToString("yyyy-MM-01") + "~" + DateTime.Now.ToString("yyyy-MM-dd"),
+                            orderNum = "0",
+                            rate = "0",
+                            supplyAmount = "0",
+                            upOrDown = "1",
+                        };
+                        monthGroups.list.Add(partSalesMonth1);
+                    }
                     PartSalesMonth partSalesMonth = new PartSalesMonth
                     {
                         actualAmount = dt.Rows[i]["ACTUAL_AMOUNT"].ToString(),
@@ -784,7 +812,7 @@ namespace ACBC.Dao
                         orderNum = "",
                         rate = "0",
                         supplyAmount = dt.Rows[i]["SUPPLY_AMOUNT"].ToString(),
-                        upOrDown = "0",
+                        upOrDown = "1",
                     };
                     //处理月份起末
                     DateTime dtime = Convert.ToDateTime(dt.Rows[i]["MONTH"].ToString() + "-01");
@@ -817,7 +845,7 @@ namespace ACBC.Dao
                         if (d < 0)
                         {
                             d = 0 - d;
-                            partSalesMonth.upOrDown = "1";
+                            partSalesMonth.upOrDown = "0";
                         }
                         partSalesMonth.rate = d.ToString();
                     }
@@ -838,7 +866,7 @@ namespace ACBC.Dao
                     orderNum = "0",
                     rate = "0",
                     supplyAmount = "0",
-                    upOrDown = "0",
+                    upOrDown = "1",
                 };
                 monthGroups.list.Add(partSalesMonth);
             }
