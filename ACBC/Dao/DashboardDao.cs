@@ -1370,7 +1370,7 @@ namespace ACBC.Dao
                     SalesShareData salesShareData = new SalesShareData
                     {
                         name = dr["CODE"].ToString(),
-                        percent = dr["PURCHASEPRICE"].ToString(),
+                        percent =(Convert.ToDouble( dr["PURCHASEPRICE"].ToString())/100).ToString(),
                         a = "1",
                     };
                     SalesShareData.data.Add(salesShareData);
