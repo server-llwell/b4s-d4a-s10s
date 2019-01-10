@@ -196,5 +196,40 @@ namespace ACBC.Buss
 
             return homePageData;
         }
+
+        public object Do_GetTradeData(BaseApi baseApi)
+        {
+            GetTradeParam getTradeParam = JsonConvert.DeserializeObject<GetTradeParam>(baseApi.param.ToString());
+            if (getTradeParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            TradeData tradeData = Utils.GetCache<TradeData>(getTradeParam);
+
+            if (tradeData == null)
+            {
+                DashboardDao dashboardDao = new DashboardDao();
+
+                string shopId = getTradeParam.shopId;
+
+                Shops shops = dashboardDao.TradeGetShops();
+                PartSales partSales = new PartSales
+                {
+                    partSalesDay = dashboardDao.TradeGetPartSalesDay(shopId),
+                    monthGroups = dashboardDao.TradeGetMonthGroups(shopId)
+                };
+                SalesTrendDataHP salesTrendData = dashboardDao.TradeGetSalesTrendData(shopId);
+
+                tradeData = new TradeData();
+                tradeData.shops = shops;
+                tradeData.partSales = partSales;
+                tradeData.salesTrendData = salesTrendData;
+
+                Utils.SetCache(tradeData, 0, 1, 0);
+            }
+
+            return tradeData;
+        }
     }
 }

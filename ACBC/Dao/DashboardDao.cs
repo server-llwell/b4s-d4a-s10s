@@ -1383,6 +1383,204 @@ namespace ACBC.Dao
         #endregion
 
         #region 一般贸易
+        /// <summary>
+        /// 获取在线店铺code
+        /// </summary>
+        /// <returns></returns>
+        public Shops TradeGetShops()
+        {
+            Shops shops = new Shops();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_SHOPID_BY_TRADE);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                Shop shop1 = new Shop
+                {
+                    shopId = "",
+                    shopName = "全部店铺",
+                };
+                shops.list.Add(shop1);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Shop shop = new Shop
+                    {
+                        shopId = dr["USERCODE"].ToString(),
+                        shopName = dr["USERNAME"].ToString(),
+                    };
+                    shops.list.Add(shop);
+                }
+            }
+            return shops;
+        }
+
+        /// <summary>
+        /// 昨日零售统计
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
+        public PartSalesDay TradeGetPartSalesDay(string shopId)
+        {
+            string yesterday = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+            PartSalesDay partSalesDay = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_TRADEAMOUNT_BY_SHOPID_DATE, shopId, yesterday);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                double rate =0;
+                string upOrDown = "1";//1上升，0，下降
+                try
+                {
+                    if (dt.Rows[0]["rate"].ToString() != "")
+                    {
+                        rate = Convert.ToDouble(dt.Rows[0]["rate"].ToString());
+                        if (rate<0)
+                        {
+                            rate = 0 - rate;
+                            upOrDown = "0";
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    
+                }
+                
+                partSalesDay = new PartSalesDay
+                {
+                    actualAmount = dt.Rows[0]["totalPrice"].ToString(),           //日销售额
+                    orderNum = "0",                   //订单数
+                    rate = rate.ToString(),                            //同比
+                    supplyAmount = dt.Rows[0]["PLATFORMPRICE"].ToString(),           //应收账款
+                    upOrDown = upOrDown,                  //上升还是下降
+                };
+            }
+            else
+            {
+                partSalesDay = new PartSalesDay
+                {
+                    actualAmount = "0",           //日销售额
+                    orderNum = "0",                   //订单数
+                    rate = "0",                            //同比
+                    supplyAmount = "0",           //应收账款
+                    upOrDown = "1",                  //上升还是下降
+                };
+            }
+
+            return partSalesDay;
+        }
+        /// <summary>
+        /// 月零售统计
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
+        public MonthGroups TradeGetMonthGroups(string shopId)
+        {
+            MonthGroups monthGroups = new MonthGroups();
+            StringBuilder builder = new StringBuilder();
+            string beginMonth = DateTime.Now.AddMonths(-12).ToString("yyyy-MM");
+            string endMonth = DateTime.Now.ToString("yyyy-MM");
+            builder.AppendFormat(DashboardSqls.SELECT_TRADEAMOUNT_BY_SHOPID_MONTH, shopId, beginMonth,endMonth);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    double rate = 0;
+                    string upOrDown = "1";//1上升，0，下降
+                    try
+                    {
+                        if (dt.Rows[0]["rate"].ToString() != "")
+                        {
+                            rate = Convert.ToDouble(dt.Rows[0]["rate"].ToString());
+                            if (rate < 0)
+                            {
+                                rate = 0 - rate;
+                                upOrDown = "0";
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    PartSalesMonth partSalesMonth = new PartSalesMonth
+                    {
+                        actualAmount = dt.Rows[i]["totalPrice"].ToString() == "" ? "0" : dt.Rows[i]["totalPrice"].ToString(),
+                        month = dt.Rows[i]["MONTH"].ToString(),
+                        monthDisplay = dt.Rows[i]["MONTH"].ToString(),
+                        orderNum = "0",
+                        rate = rate.ToString(),
+                        supplyAmount = dt.Rows[i]["PLATFORMPRICE"].ToString() == "" ? "0" : dt.Rows[i]["PLATFORMPRICE"].ToString(),
+                        upOrDown = upOrDown,
+                    };
+
+                    //处理月份起末
+                    DateTime dtime = Convert.ToDateTime(dt.Rows[i]["MONTH"].ToString() + "-01");
+                    string beginDate = dtime.ToString("yyyy-MM-dd");
+                    string endDate = dtime.AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                    partSalesMonth.monthDisplay = beginDate + "~" + endDate;
+
+                    monthGroups.list.Add(partSalesMonth);
+                }
+            }
+            else
+            {
+                PartSalesMonth partSalesMonth = new PartSalesMonth
+                {
+                    actualAmount = "0",
+                    month = "0",
+                    monthDisplay = "0",
+                    orderNum = "0",
+                    rate = "0",
+                    supplyAmount = "0",
+                    upOrDown = "1",
+                };
+                monthGroups.list.Add(partSalesMonth);
+            }
+            return monthGroups;
+        }
+        public SalesTrendDataHP TradeGetSalesTrendData(string shopId)
+        {
+            SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
+            DateTime dateTime = DateTime.Now;
+            string beginMonth = DateTime.Now.AddMonths(-12).ToString("yyyy-MM");
+            string endMonth = DateTime.Now.ToString("yyyy-MM");
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_SELL_BY_SHOPID_MONTH, shopId, beginMonth,endMonth);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SalesTrend salesTrend1 = new SalesTrend
+                    {
+                        month = dr["month"].ToString(),
+                        type = dr["username"].ToString(),
+                        value = dr["totalprice"].ToString() == "" ? "0" : dr["totalprice"].ToString(),
+                    };
+                    salesTrendData.salesTrends.Add(salesTrend1);
+                }
+                salesTrendData.status = "1";
+            }
+            else
+            {
+                SalesTrend salesTrend1 = new SalesTrend
+                {
+                    month = "",
+                    type = "",
+                    value = "0",
+                };
+                salesTrendData.salesTrends.Add(salesTrend1);
+            }
+            return salesTrendData;
+        }
+
 
         #endregion
         public class DashboardSqls
@@ -1449,9 +1647,15 @@ namespace ACBC.Dao
                 "FROM T_ORDER_LIST O ,T_ORDER_GOODS G " +
                 "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') AND ('{1}'='' or PURCHASERCODE = '{1}')  AND APITYPE='{4}' " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') DESC LIMIT 10";
+
             public const string SELECT_HOMEPAGE_SELLTOTAL = "SELECT SUM(PURCHASEPRICE) PURCHASEPRICE,SUM(PLATFORMPRICE) PLATFORMPRICE FROM V_HOMEPAGE_TOTALSELL";
             public const string SELECT_HOMEPAGE_THISYEAR_SELL = "SELECT * FROM V_HOMEPAGE_THISYEAR_SELL WHERE MONTH LIKE '{0}%' AND MONTH <'{1}' ";
             public const string SELECT_HOMEPAGE_SELLTOTAL_PROPORTION = "SELECT * FROM V_HOMEPAGE_TOTALSELL_PROPORTION";
+
+            public const string SELECT_SHOPID_BY_TRADE = "SELECT U.USERCODE,U.USERNAME FROM T_PURCHASE_LIST P ,T_USER_LIST U WHERE P.USERCODE = U.USERCODE AND P.USERCODE <>'ADMIN' GROUP BY U.USERCODE,U.USERNAME ";
+            public const string SELECT_TRADEAMOUNT_BY_SHOPID_DATE = "SELECT * FROM V_PICAI_DATE_RATE WHERE ('{0}'='' or USERCODE = '{0}') AND DATE='{1}'";
+            public const string SELECT_TRADEAMOUNT_BY_SHOPID_MONTH = "SELECT * FROM V_PICAI_MONTH_RATE WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}'";
+            public const string SELECT_SELL_BY_SHOPID_MONTH = "SELECT * FROM V_PICAI_SELL_BY_MONTH_USER WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}'";
         }
     }
 }
