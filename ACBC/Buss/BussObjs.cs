@@ -116,6 +116,14 @@ namespace ACBC.Buss
     {
         public string shopId;
     }
+    public class GetHomePageParam : BussParam
+    {
+        public string shopId;
+    }
+    public class GetTradeParam : BussParam
+    {
+        public string shopId;
+    }
     #endregion
 
     #region DaoObjs
@@ -158,7 +166,18 @@ namespace ACBC.Buss
         public StockTRateData stockTRateData;
 
     }
-
+    public class HomePageData : BussCache
+    {
+        public PartSalesHP partSales;
+        public SalesTrendDataHP salesTrendData;
+        public SalesShareDataHP SalesShareData;
+    }
+    public class TradeData : BussCache
+    {
+        public Shops shops;
+        public PartSales partSales;
+        public SalesTrendDataHP salesTrendData;
+    }
     public class Shops
     {
         public List<Shop> list = new List<Shop>();
@@ -292,6 +311,39 @@ namespace ACBC.Buss
     {
         public double rate;
         public string title;
+    }
+    
+    public class PartSalesHP
+    {
+        public string sales="0";
+        public string platformProfit="0";
+    }
+    public class SalesTrendDataHP
+    {
+        public string status = "0";
+        public List<SalesTrend> salesTrends= new List<SalesTrend>();
+    }
+    public class SalesTrend
+    {
+        public string month;
+        public string type;
+        public string value;
+    }
+    public class SalesShareDataHP
+    {
+        public List<SalesShareMap> map =new List<SalesShareMap>();
+        public List<SalesShareData> data = new List<SalesShareData>();
+    }
+    public class SalesShareMap
+    {
+        public string rate;
+        public string title;
+    }
+    public class SalesShareData
+    {
+        public string name;
+        public string percent;
+        public string a;
     }
     #endregion
 }

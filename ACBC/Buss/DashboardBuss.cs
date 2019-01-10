@@ -164,5 +164,37 @@ namespace ACBC.Buss
 
             return offlineData;
         }
+
+
+        public object Do_GetHomePageData(BaseApi baseApi)
+        {
+            GetHomePageParam getHomePageParam = JsonConvert.DeserializeObject<GetHomePageParam>(baseApi.param.ToString());
+            if (getHomePageParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            HomePageData homePageData = Utils.GetCache<HomePageData>(getHomePageParam);
+
+            if (homePageData == null)
+            {
+                DashboardDao dashboardDao = new DashboardDao();
+
+                string shopId = getHomePageParam.shopId;
+
+                PartSalesHP partSalesHP = dashboardDao.HomePageGetPartSalesHP(shopId);
+                SalesTrendDataHP salesTrendData = dashboardDao.HomePageGetSalesTrendData(shopId);
+                SalesShareDataHP SalesShareData = dashboardDao.HomePageGetSalesShareData(shopId);
+
+                homePageData = new HomePageData();
+                homePageData.partSales = partSalesHP;
+                homePageData.salesTrendData = salesTrendData;
+                homePageData.SalesShareData = SalesShareData;
+
+                Utils.SetCache(homePageData, 0, 1, 0);
+            }
+
+            return homePageData;
+        }
     }
 }

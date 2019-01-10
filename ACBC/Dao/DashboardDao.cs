@@ -11,6 +11,7 @@ namespace ACBC.Dao
 {
     public class DashboardDao
     {
+        #region 在线
         /// <summary>
         /// 获取在线店铺code
         /// </summary>
@@ -630,8 +631,8 @@ namespace ACBC.Dao
             return list;
         }
 
-
-
+        #endregion
+        #region 线下
         public Shops OfflineGetShops()
         {
 
@@ -1286,7 +1287,104 @@ namespace ACBC.Dao
             }
             return list;
         }
+        #endregion
 
+        #region 首页
+        public PartSalesHP HomePageGetPartSalesHP(string shopId)
+        {
+            PartSalesHP partSalesHP = new PartSalesHP();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_SELLTOTAL);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                partSalesHP = new PartSalesHP
+                {
+                    sales = dt.Rows[0]["PURCHASEPRICE"].ToString(),
+                    platformProfit = dt.Rows[0]["PLATFORMPRICE"].ToString(),
+                };
+            }
+            return partSalesHP;
+        }
+        public SalesTrendDataHP HomePageGetSalesTrendData(string shopId)
+        {
+            SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
+            DateTime dateTime = DateTime.Now;
+            //if (dateTime.ToString("MM") == "01")
+            //{
+            //    return salesTrendData;
+            //}
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_THISYEAR_SELL, dateTime.ToString("yyyy"), dateTime.AddMonths(1).ToString("yyyy-MM"));
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SalesTrend salesTrend1 = new SalesTrend
+                    {
+                        month = dr["month"].ToString(),
+                        type = "线上店",
+                        value = dr["SUPPLY_AMOUNT1"].ToString()==""?"0": dr["SUPPLY_AMOUNT1"].ToString(),
+                    };
+                    salesTrendData.salesTrends.Add(salesTrend1);
+                    SalesTrend salesTrend2 = new SalesTrend
+                    {
+                        month = dr["month"].ToString(),
+                        type = "线下店",
+                        value = dr["SUPPLY_AMOUNT2"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT2"].ToString(),
+                    };
+                    salesTrendData.salesTrends.Add(salesTrend2);
+                    SalesTrend salesTrend3 = new SalesTrend
+                    {
+                        month = dr["month"].ToString(),
+                        type = "一般贸易",
+                        value = dr["SUPPLY_AMOUNT3"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT3"].ToString(),
+                    };
+                    salesTrendData.salesTrends.Add(salesTrend3);
+                }
+                salesTrendData.status = "1";
+            }
+            return salesTrendData;
+        }
+
+        public SalesShareDataHP HomePageGetSalesShareData(string shopId)
+        {
+            SalesShareDataHP SalesShareData = new SalesShareDataHP();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_SELLTOTAL_PROPORTION);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SalesShareMap salesShareMap = new SalesShareMap
+                    {
+                        rate = dr["PURCHASEPRICE"].ToString(),
+                        title = dr["CODE"].ToString(),
+                    };
+                    SalesShareData.map.Add(salesShareMap);
+                    SalesShareData salesShareData = new SalesShareData
+                    {
+                        name = dr["CODE"].ToString(),
+                        percent = dr["PURCHASEPRICE"].ToString(),
+                        a = "1",
+                    };
+                    SalesShareData.data.Add(salesShareData);
+                }
+            }
+            return SalesShareData;
+        }
+
+
+        #endregion
+
+        #region 一般贸易
+
+        #endregion
         public class DashboardSqls
         {
             public const string SELECT_SHOPID_BY_ONLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='1' ";
@@ -1351,7 +1449,9 @@ namespace ACBC.Dao
                 "FROM T_ORDER_LIST O ,T_ORDER_GOODS G " +
                 "WHERE O.MERCHANTORDERID= G.MERCHANTORDERID AND  TRADETIME BETWEEN STR_TO_DATE('{2}', '%Y-%m-%d') AND STR_TO_DATE('{3}', '%Y-%m-%d') AND ('{1}'='' or PURCHASERCODE = '{1}')  AND APITYPE='{4}' " +
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') DESC LIMIT 10";
-
+            public const string SELECT_HOMEPAGE_SELLTOTAL = "SELECT SUM(PURCHASEPRICE) PURCHASEPRICE,SUM(PLATFORMPRICE) PLATFORMPRICE FROM V_HOMEPAGE_TOTALSELL";
+            public const string SELECT_HOMEPAGE_THISYEAR_SELL = "SELECT * FROM V_HOMEPAGE_THISYEAR_SELL WHERE MONTH LIKE '{0}%' AND MONTH <'{1}' ";
+            public const string SELECT_HOMEPAGE_SELLTOTAL_PROPORTION = "SELECT * FROM V_HOMEPAGE_TOTALSELL_PROPORTION";
         }
     }
 }
