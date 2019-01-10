@@ -1363,7 +1363,7 @@ namespace ACBC.Dao
                 {
                     SalesShareMap salesShareMap = new SalesShareMap
                     {
-                        rate = dr["PURCHASEPRICE"].ToString(),
+                        rate = dr["PURCHASEPRICE"].ToString()+"%",
                         title = dr["CODE"].ToString(),
                     };
                     SalesShareData.map.Add(salesShareMap);
