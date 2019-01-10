@@ -23,7 +23,7 @@ namespace ACBC.Dao
                 user = new User
                 {
                     openid = dt.Rows[0]["OPENID"].ToString(),
-                    userId = dt.Rows[0]["USER_ID"].ToString(),
+                    userId = dt.Rows[0]["STAFF_USER_ID"].ToString(),
                     userImg = dt.Rows[0]["USER_IMG"].ToString(),
                     userName = dt.Rows[0]["USER_NAME"].ToString(),
                     userType = dt.Rows[0]["USER_TYPE"].ToString()
@@ -72,7 +72,7 @@ namespace ACBC.Dao
                 + "WHERE USER_CODE = '{0}' "
                 + "AND OPENID IS NULL";
             public const string UPDATE_WXAPP_STAFF_USER = ""
-                + "UPDATE T_WXAPP_STASS_USER "
+                + "UPDATE T_WXAPP_STAFF_USER "
                 + "SET USER_NAME = '{0}', "
                 + "USER_IMG = '{1}', "
                 + "OPENID = '{2}' "
