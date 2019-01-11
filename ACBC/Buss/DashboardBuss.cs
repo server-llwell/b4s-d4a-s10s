@@ -205,10 +205,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            TradeData tradeData = Utils.GetCache<TradeData>(getTradeParam);
-
-            if (tradeData == null)
-            {
+            //TradeData tradeData = Utils.GetCache<TradeData>(getTradeParam);
+            
+            //if (tradeData == null)
+            //{
                 DashboardDao dashboardDao = new DashboardDao();
 
                 string shopId = getTradeParam.shopId;
@@ -221,13 +221,13 @@ namespace ACBC.Buss
                 };
                 SalesTrendDataHP salesTrendData = dashboardDao.TradeGetSalesTrendData(shopId);
 
-                tradeData = new TradeData();
+            TradeData tradeData = new TradeData();
                 tradeData.shops = shops;
                 tradeData.partSales = partSales;
                 tradeData.salesTrendData = salesTrendData;
 
-                Utils.SetCache(tradeData, 0, 1, 0);
-            }
+            //    Utils.SetCache(tradeData, 0, 1, 0);
+            //}
 
             return tradeData;
         }
