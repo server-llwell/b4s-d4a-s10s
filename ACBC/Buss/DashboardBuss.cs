@@ -174,10 +174,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            HomePageData homePageData = Utils.GetCache<HomePageData>(getHomePageParam);
+            //HomePageData homePageData = Utils.GetCache<HomePageData>(getHomePageParam);
 
-            if (homePageData == null)
-            {
+            //if (homePageData == null)
+            //{
                 DashboardDao dashboardDao = new DashboardDao();
 
                 string shopId = getHomePageParam.shopId;
@@ -186,13 +186,13 @@ namespace ACBC.Buss
                 SalesTrendDataHP salesTrendData = dashboardDao.HomePageGetSalesTrendData(shopId);
                 SalesShareDataHP SalesShareData = dashboardDao.HomePageGetSalesShareData(shopId);
 
-                homePageData = new HomePageData();
+            HomePageData homePageData = new HomePageData();
                 homePageData.partSales = partSalesHP;
                 homePageData.salesTrendData = salesTrendData;
                 homePageData.SalesShareData = SalesShareData;
 
-                Utils.SetCache(homePageData, 0, 1, 0);
-            }
+            //    Utils.SetCache(homePageData, 0, 1, 0);
+            //}
 
             return homePageData;
         }
