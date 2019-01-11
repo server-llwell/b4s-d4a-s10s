@@ -196,6 +196,7 @@ namespace ACBC.Buss
 
     public class PartSales
     {
+        public string marketingRate;
         public string dailyAverage;
         public PartSalesDay partSalesDay;
         public MonthGroups monthGroups;

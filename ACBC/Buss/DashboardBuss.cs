@@ -91,10 +91,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
+            //OfflineData offlineData = Utils.GetCache<OfflineData>(getOfflineShopDataParam);
 
-            if (offlineData == null)
-            {
+            //if (offlineData == null)
+            //{
                 DashboardDao dashboardDao = new DashboardDao();
                 Shops shops = dashboardDao.OfflineGetShops();
 
@@ -102,6 +102,7 @@ namespace ACBC.Buss
 
                 PartSales partSales = new PartSales
                 {
+                    marketingRate = dashboardDao.OfflineGetMarketingRate(shopId),
                     dailyAverage = dashboardDao.OfflineGetDailyAverage(shopId),
                     partSalesDay = dashboardDao.OfflineGetPartSalesDay(shopId),
                     monthGroups = dashboardDao.OfflineGetMonthGroups(shopId)
@@ -147,7 +148,7 @@ namespace ACBC.Buss
                 {
                     list = dashboardDao.OfflineGetStockTMonthList(shopId)
                 };
-                offlineData = new OfflineData();
+            OfflineData offlineData = new OfflineData();
                 offlineData.accountsReceivableTRateData = accountsReceivableTRateData;
                 offlineData.bestSellerGoodsData = bestSellerGoodsData;
                 offlineData.lowSellerGoodsData = lowSellerGoodsData;
@@ -159,8 +160,8 @@ namespace ACBC.Buss
                 offlineData.marketingRateData = marketingRateData;
                 offlineData.stockTRateData = stockTRateData;
                 offlineData.Unique = getOfflineShopDataParam.GetUnique();
-                Utils.SetCache(offlineData, 0, 1, 0);
-            }
+            //    Utils.SetCache(offlineData, 0, 1, 0);
+            //}
 
             return offlineData;
         }

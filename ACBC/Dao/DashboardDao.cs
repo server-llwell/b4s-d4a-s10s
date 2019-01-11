@@ -661,7 +661,28 @@ namespace ACBC.Dao
             }
             return shops;
         }
-
+        public string OfflineGetMarketingRate(string shopId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(DashboardSqls.SELECT_MARKETINGRATE_BY_OFFLINE, shopId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                if (dt.Rows[0]["DXB"].ToString() == "")
+                {
+                    return "0%";
+                }
+                else
+                {
+                    return dt.Rows[0]["DXB"].ToString()+"%";
+                }
+            }
+            else
+            {
+                return "0%";
+            }
+        }
         public string OfflineGetDailyAverage(string shopId)
         {
             StringBuilder builder = new StringBuilder();
@@ -1617,6 +1638,7 @@ namespace ACBC.Dao
         {
             public const string SELECT_SHOPID_BY_ONLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='1' ";
             public const string SELECT_SHOPID_BY_OFFLINE = "SELECT USERCODE,USERNAME FROM T_USER_LIST WHERE ifOnline='0' ";
+            public const string SELECT_MARKETINGRATE_BY_OFFLINE = "SELECT SUM(SELLNUM)/(SUM(SELLNUM)+SUM(GOODSNUM))*100 AS DXB FROM V_OFFLINE_MARKETINGRATE WHERE ('{0}'='' or USERCODE = '{0}')";
             public const string SELECT_DAILYAVERAGE_BY_SHOPID = "SELECT ROUND( SUM(TRADEAMOUNT)/COUNT(*),2) as DAILY_AVERAGE " +
                                                                 "FROM T_ORDER_LIST WHERE ('{0}'='' or PURCHASERCODE = '{0}' ) AND APITYPE='{1}' ";
             public const string SELECT_AMOUNT_BY_SHOPID_DATE = "SELECT SUM(G.SKUUNITPRICE*G.QUANTITY) as ACTUAL_AMOUNT,SUM(G.PURCHASEPRICE*G.QUANTITY) as SUPPLY_AMOUNT " +
