@@ -327,7 +327,7 @@ namespace ACBC.Buss
     {
         public string month;
         public string type;
-        public string value;
+        public double value;
     }
     public class SalesShareDataHP
     {

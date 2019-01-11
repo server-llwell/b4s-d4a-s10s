@@ -1312,7 +1312,7 @@ namespace ACBC.Dao
             SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
             DateTime dateTime = DateTime.Now.AddMonths(-1);
             string beginMonth = dateTime.ToString("yyyy-01");
-            string endMonth = DateTime.Now.ToString("yyyy-12");
+            string endMonth = dateTime.ToString("yyyy-12");
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_THISYEAR_SELL, beginMonth, endMonth);
             string sql = builder.ToString();
@@ -1323,23 +1323,23 @@ namespace ACBC.Dao
                 {
                     SalesTrend salesTrend1 = new SalesTrend
                     {
-                        month = dr["month"].ToString(),
+                        month = dr["month"].ToString().Substring(5),
                         type = "线上店",
-                        value = dr["SUPPLY_AMOUNT1"].ToString()==""?"0": dr["SUPPLY_AMOUNT1"].ToString(),
+                        value = dr["SUPPLY_AMOUNT1"].ToString()==""?0:Convert.ToDouble( dr["SUPPLY_AMOUNT1"].ToString()),
                     };
                     salesTrendData.salesTrends.Add(salesTrend1);
                     SalesTrend salesTrend2 = new SalesTrend
                     {
                         month = dr["month"].ToString().Substring(5),
                         type = "线下店",
-                        value = dr["SUPPLY_AMOUNT2"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT2"].ToString(),
+                        value = dr["SUPPLY_AMOUNT2"].ToString() == "" ? 0 : Convert.ToDouble(dr["SUPPLY_AMOUNT2"].ToString()),
                     };
                     salesTrendData.salesTrends.Add(salesTrend2);
                     SalesTrend salesTrend3 = new SalesTrend
                     {
                         month = dr["month"].ToString().Substring(5),
                         type = "一般贸易",
-                        value = dr["SUPPLY_AMOUNT3"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT3"].ToString(),
+                        value = dr["SUPPLY_AMOUNT3"].ToString() == "" ? 0 : Convert.ToDouble(dr["SUPPLY_AMOUNT3"].ToString()),
                     };
                     salesTrendData.salesTrends.Add(salesTrend3);
                 }
@@ -1350,21 +1350,21 @@ namespace ACBC.Dao
                 {
                     month = "1",
                     type = "线上店",
-                    value = "0",
+                    value = 0,
                 };
                 salesTrendData.salesTrends.Add(salesTrend1);
                 SalesTrend salesTrend2 = new SalesTrend
                 {
                     month = "1",
                     type = "线下店",
-                    value = "0",
+                    value = 0,
                 };
                 salesTrendData.salesTrends.Add(salesTrend2);
                 SalesTrend salesTrend3 = new SalesTrend
                 {
                     month = "1",
                     type = "一般贸易",
-                    value = "0",
+                    value = 0,
                 };
                 salesTrendData.salesTrends.Add(salesTrend3);
             }
@@ -1572,7 +1572,7 @@ namespace ACBC.Dao
             SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
             DateTime dateTime = DateTime.Now.AddMonths(-1);
             string beginMonth = dateTime.ToString("yyyy-01");
-            string endMonth = DateTime.Now.ToString("yyyy-12");
+            string endMonth = dateTime.ToString("yyyy-12");
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_SELL_BY_SHOPID_MONTH, shopId, beginMonth,endMonth);
             string sql = builder.ToString();
@@ -1585,18 +1585,18 @@ namespace ACBC.Dao
                     {
                         month = dr["month"].ToString().Substring(5),
                         type = "销售金额",
-                        value = dr["totalprice"].ToString() == "" ? "0" : dr["totalprice"].ToString(),
+                        value = dr["totalprice"].ToString() == "" ? 0 :Convert.ToDouble( dr["totalprice"].ToString()),
                     };
                     salesTrendData.salesTrends.Add(salesTrend1);
                     SalesTrend salesTrend2 = new SalesTrend
                     {
                         month = dr["month"].ToString().Substring(5),
                         type = "平台利润",
-                        value = dr["platformprice"].ToString() == "" ? "0" : dr["platformprice"].ToString(),
+                        value = dr["platformprice"].ToString() == "" ? 0 : Convert.ToDouble(dr["totalprice"].ToString()),
                     };
                     salesTrendData.salesTrends.Add(salesTrend2);
                 }
-                salesTrendData.status = "1";
+                salesTrendData.status = dateTime.ToString("yyyy");
             }
             else
             {
@@ -1604,7 +1604,7 @@ namespace ACBC.Dao
                 {
                     month = "",
                     type = "",
-                    value = "0",
+                    value = 0,
                 };
                 salesTrendData.salesTrends.Add(salesTrend1);
             }
