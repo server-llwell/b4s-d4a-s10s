@@ -1310,13 +1310,11 @@ namespace ACBC.Dao
         public SalesTrendDataHP HomePageGetSalesTrendData(string shopId)
         {
             SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
-            DateTime dateTime = DateTime.Now;
-            //if (dateTime.ToString("MM") == "01")
-            //{
-            //    return salesTrendData;
-            //}
+            DateTime dateTime = DateTime.Now.AddMonths(-1);
+            string beginMonth = dateTime.ToString("yyyy-01");
+            string endMonth = DateTime.Now.ToString("yyyy-12");
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_THISYEAR_SELL, dateTime.ToString("yyyy"), dateTime.AddMonths(1).ToString("yyyy-MM"));
+            builder.AppendFormat(DashboardSqls.SELECT_HOMEPAGE_THISYEAR_SELL, beginMonth, endMonth);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -1332,21 +1330,46 @@ namespace ACBC.Dao
                     salesTrendData.salesTrends.Add(salesTrend1);
                     SalesTrend salesTrend2 = new SalesTrend
                     {
-                        month = dr["month"].ToString(),
+                        month = dr["month"].ToString().Substring(5),
                         type = "线下店",
                         value = dr["SUPPLY_AMOUNT2"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT2"].ToString(),
                     };
                     salesTrendData.salesTrends.Add(salesTrend2);
                     SalesTrend salesTrend3 = new SalesTrend
                     {
-                        month = dr["month"].ToString(),
+                        month = dr["month"].ToString().Substring(5),
                         type = "一般贸易",
                         value = dr["SUPPLY_AMOUNT3"].ToString() == "" ? "0" : dr["SUPPLY_AMOUNT3"].ToString(),
                     };
                     salesTrendData.salesTrends.Add(salesTrend3);
                 }
-                salesTrendData.status = "1";
             }
+            else
+            {
+                SalesTrend salesTrend1 = new SalesTrend
+                {
+                    month = "1",
+                    type = "线上店",
+                    value = "0",
+                };
+                salesTrendData.salesTrends.Add(salesTrend1);
+                SalesTrend salesTrend2 = new SalesTrend
+                {
+                    month = "1",
+                    type = "线下店",
+                    value = "0",
+                };
+                salesTrendData.salesTrends.Add(salesTrend2);
+                SalesTrend salesTrend3 = new SalesTrend
+                {
+                    month = "1",
+                    type = "一般贸易",
+                    value = "0",
+                };
+                salesTrendData.salesTrends.Add(salesTrend3);
+            }
+
+            salesTrendData.status = dateTime.ToString("yyyy");
             return salesTrendData;
         }
 
@@ -1370,7 +1393,7 @@ namespace ACBC.Dao
                     SalesShareData salesShareData = new SalesShareData
                     {
                         name = dr["CODE"].ToString(),
-                        percent =(Convert.ToDouble( dr["PURCHASEPRICE"].ToString())/100).ToString(),
+                        percent =Convert.ToDouble( dr["PURCHASEPRICE"].ToString())/100,
                         a = "1",
                     };
                     SalesShareData.data.Add(salesShareData);
@@ -1515,7 +1538,7 @@ namespace ACBC.Dao
                         monthDisplay = dt.Rows[i]["MONTH"].ToString(),
                         orderNum = "0",
                         rate = rate.ToString(),
-                        supplyAmount = dt.Rows[i]["PLATFORMPRICE"].ToString() == "" ? "0" : dt.Rows[i]["PLATFORMPRICE"].ToString(),
+                        supplyAmount = dt.Rows[i]["platformprice"].ToString() == "" ? "0" : dt.Rows[i]["platformprice"].ToString(),
                         upOrDown = upOrDown,
                     };
 
@@ -1547,9 +1570,9 @@ namespace ACBC.Dao
         public SalesTrendDataHP TradeGetSalesTrendData(string shopId)
         {
             SalesTrendDataHP salesTrendData = new SalesTrendDataHP();
-            DateTime dateTime = DateTime.Now;
-            string beginMonth = DateTime.Now.AddMonths(-12).ToString("yyyy-MM");
-            string endMonth = DateTime.Now.ToString("yyyy-MM");
+            DateTime dateTime = DateTime.Now.AddMonths(-1);
+            string beginMonth = dateTime.ToString("yyyy-01");
+            string endMonth = DateTime.Now.ToString("yyyy-12");
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(DashboardSqls.SELECT_SELL_BY_SHOPID_MONTH, shopId, beginMonth,endMonth);
             string sql = builder.ToString();
@@ -1560,11 +1583,18 @@ namespace ACBC.Dao
                 {
                     SalesTrend salesTrend1 = new SalesTrend
                     {
-                        month = dr["month"].ToString(),
-                        type = dr["username"].ToString(),
+                        month = dr["month"].ToString().Substring(5),
+                        type = "销售金额",
                         value = dr["totalprice"].ToString() == "" ? "0" : dr["totalprice"].ToString(),
                     };
                     salesTrendData.salesTrends.Add(salesTrend1);
+                    SalesTrend salesTrend2 = new SalesTrend
+                    {
+                        month = dr["month"].ToString().Substring(5),
+                        type = "平台利润",
+                        value = dr["platformprice"].ToString() == "" ? "0" : dr["platformprice"].ToString(),
+                    };
+                    salesTrendData.salesTrends.Add(salesTrend2);
                 }
                 salesTrendData.status = "1";
             }
@@ -1649,13 +1679,14 @@ namespace ACBC.Dao
                 "GROUP BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') ORDER BY DATE_FORMAT(TRADETIME,'%Y-%m-%d') DESC LIMIT 10";
 
             public const string SELECT_HOMEPAGE_SELLTOTAL = "SELECT SUM(PURCHASEPRICE) PURCHASEPRICE,SUM(PLATFORMPRICE) PLATFORMPRICE FROM V_HOMEPAGE_TOTALSELL";
-            public const string SELECT_HOMEPAGE_THISYEAR_SELL = "SELECT * FROM V_HOMEPAGE_THISYEAR_SELL WHERE MONTH LIKE '{0}%' AND MONTH <'{1}' ";
+            public const string SELECT_HOMEPAGE_THISYEAR_SELL = "SELECT * FROM V_HOMEPAGE_THISYEAR_SELL WHERE MONTH BETWEEN '{0}' AND  '{1}' ";
             public const string SELECT_HOMEPAGE_SELLTOTAL_PROPORTION = "SELECT * FROM V_HOMEPAGE_TOTALSELL_PROPORTION";
 
             public const string SELECT_SHOPID_BY_TRADE = "SELECT U.USERCODE,U.USERNAME FROM T_PURCHASE_LIST P ,T_USER_LIST U WHERE P.USERCODE = U.USERCODE AND P.USERCODE <>'ADMIN' GROUP BY U.USERCODE,U.USERNAME ";
             public const string SELECT_TRADEAMOUNT_BY_SHOPID_DATE = "SELECT * FROM V_PICAI_DATE_RATE WHERE ('{0}'='' or USERCODE = '{0}') AND DATE='{1}'";
-            public const string SELECT_TRADEAMOUNT_BY_SHOPID_MONTH = "SELECT * FROM V_PICAI_MONTH_RATE WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}'";
-            public const string SELECT_SELL_BY_SHOPID_MONTH = "SELECT * FROM V_PICAI_SELL_BY_MONTH_USER WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}'";
+            public const string SELECT_TRADEAMOUNT_BY_SHOPID_MONTH = "SELECT MONTH,SUM(COSTPRICE) COSTPRICE ,SUM(TOTALPRICE) TOTALPRICE ,SUM(PLATFORMPRICE) PLATFORMPRICE, (SUM(TOTALPRICE) - SUM(LASTMONTHPRICE)) /SUM(LASTMONTHPRICE) RATE " +
+                "FROM V_PICAI_MONTH_RATE  WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}' GROUP BY USERCODE ORDER BY MONTH DESC";
+            public const string SELECT_SELL_BY_SHOPID_MONTH = "SELECT MONTH,SUM(TOTALPRICE) TOTALPRICE ,SUM(PLATFORMPRICE) PLATFORMPRICE FROM V_PICAI_SELL_BY_MONTH_USER WHERE ('{0}'='' or USERCODE = '{0}') AND MONTH BETWEEN '{1}' AND '{2}' GROUP BY MONTH";
         }
     }
 }

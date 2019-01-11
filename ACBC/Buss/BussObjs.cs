@@ -342,7 +342,7 @@ namespace ACBC.Buss
     public class SalesShareData
     {
         public string name;
-        public string percent;
+        public double percent;
         public string a;
     }
     #endregion
